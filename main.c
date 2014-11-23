@@ -31,28 +31,37 @@ int my_putchar_printf(char c, FILE *stream) {
 
 FILE uart_output = FDEV_SETUP_STREAM(my_putchar_printf, NULL, _FDEV_SETUP_WRITE);
 
-int keyboard_state = 0;
+typedef enum {
+  KEYBOARD_START = 0,
+  KEYBOARD_SCAN = 1,
+  KEYBOARD_PARITY = 2,
+  KEYBOARD_END = 3,
+} kstate;
+
+kstate keyboard_state = KEYBOARD_START;
+int keyboard_bits_read = 0;
 unsigned char keyboard_value = 0;
 int keyboard_tmp = 0;
-int keyboard_valid = 0;
 unsigned char keyboard_buffer[100];
 int keyboard_buffer_pos = 0;
 
 ISR(INT0_vect) {
-  if (keyboard_state == 0) {
-    keyboard_state = 1;
-    keyboard_valid = 0;
-  } else if (keyboard_state > 0 && keyboard_state <= 8) {
-    keyboard_state += 1;
+  if (keyboard_state == KEYBOARD_START) {
+    keyboard_state = KEYBOARD_SCAN;
+  } else if (keyboard_state == KEYBOARD_SCAN) {
     keyboard_tmp = PIND & _BV(PD3);
     keyboard_value = keyboard_value >> 1;
     if (keyboard_tmp)
       keyboard_value |= 0x80;
-  } else if (keyboard_state == 9) {
-    keyboard_state += 1;
+    keyboard_bits_read += 1;
+    if (keyboard_bits_read == 8) {
+      keyboard_bits_read = 0;
+      keyboard_state = KEYBOARD_PARITY;
+    }
+  } else if (keyboard_state == KEYBOARD_PARITY) {
+    keyboard_state = KEYBOARD_END;
   } else {
-    keyboard_state = 0;
-    keyboard_valid = 1;
+    keyboard_state = KEYBOARD_START;
     keyboard_buffer[keyboard_buffer_pos] = keyboard_value;
     keyboard_value = 0;
     keyboard_buffer_pos += 1;

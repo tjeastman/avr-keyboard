@@ -43,14 +43,11 @@ ISR(INT0_vect) {
     keyboard_state = 1;
     keyboard_valid = 0;
   } else if (keyboard_state > 0 && keyboard_state <= 8) {
-    keyboard_tmp = PIND & _BV(PD3);
-    if (keyboard_tmp) {
-      keyboard_value = keyboard_value >> 1;
-      keyboard_value |= 0x80;
-    } else {
-      keyboard_value = keyboard_value >> 1;
-    }
     keyboard_state += 1;
+    keyboard_tmp = PIND & _BV(PD3);
+    keyboard_value = keyboard_value >> 1;
+    if (keyboard_tmp)
+      keyboard_value |= 0x80;
   } else if (keyboard_state == 9) {
     keyboard_state += 1;
   } else {

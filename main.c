@@ -38,13 +38,13 @@ typedef enum {
   KEYBOARD_END = 3,
 } kstate;
 
-kstate keyboard_state = KEYBOARD_START;
-int keyboard_bits_read = 0;
-unsigned char keyboard_value = 0;
 unsigned char keyboard_buffer[100];
 int keyboard_buffer_pos = 0;
 
 ISR(INT0_vect) {
+  static kstate keyboard_state = KEYBOARD_START;
+  static int keyboard_bits_read = 0;
+  static unsigned char keyboard_value = 0;
   if (keyboard_state == KEYBOARD_START) {
     keyboard_state = KEYBOARD_SCAN;
   } else if (keyboard_state == KEYBOARD_SCAN) {

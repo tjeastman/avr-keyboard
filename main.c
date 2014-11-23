@@ -1,6 +1,5 @@
 #include <avr/io.h>
 #include <stdio.h>
-#include <string.h>
 
 #include <util/setbaud.h>
 #include <util/delay.h>
@@ -25,19 +24,18 @@ void my_putchar(char c) {
   UDR0 = c;
 }
 
-void my_putnumber(unsigned int n) {
-  int i;
-  char buf[64];
-  sprintf(buf, "0x%x [%d] ", n, n);
-  for (i = 0; i < strlen(buf); ++i)
-    my_putchar(buf[i]);
+int my_putchar_printf(char c, FILE *stream) {
+  my_putchar(c);
+  return 0;
 }
+
+FILE uart_output = FDEV_SETUP_STREAM(my_putchar_printf, NULL, _FDEV_SETUP_WRITE);
 
 int keyboard_state = 0;
 unsigned char keyboard_value = 0;
 int keyboard_tmp = 0;
 int keyboard_valid = 0;
-unsigned char keyboard_buffer[2000];
+unsigned char keyboard_buffer[100];
 int keyboard_buffer_pos = 0;
 
 ISR(INT0_vect) {
@@ -67,6 +65,7 @@ ISR(INT0_vect) {
 int main(void) {
   int i;
   uart_init();
+  stdout = &uart_output;
 
   // enable pull-up resistors on PD2 and PD3
   PORTD = 1<<PD2 | 1<<PD3;
@@ -80,11 +79,10 @@ int main(void) {
 
   while (1) {
     for (i = 0; i < keyboard_buffer_pos; ++i) {
-      my_putnumber((unsigned int)keyboard_buffer[i]);
+      printf("0x%x [%d] ", keyboard_buffer[i], keyboard_buffer[i]);
     }
     if (keyboard_buffer_pos > 0) {
-      my_putchar('\r');
-      my_putchar('\n');
+      printf("\r\n");
     }
     keyboard_buffer_pos = 0;
     _delay_ms(4000);

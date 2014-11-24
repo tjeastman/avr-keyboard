@@ -55,7 +55,7 @@ void keyboard_interrupt(void)
     buffer_head->code.value = code.value;
     buffer_head->code.nbits = code.nbits;
     buffer_head->code.parity = code.parity;
-    buffer_head->code.state = SCAN_END;
+    buffer_head->code.state = code.state;
     buffer_head = buffer_head->next;
     scan_code_reset(&code);
     break;

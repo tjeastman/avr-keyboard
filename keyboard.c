@@ -6,7 +6,6 @@ volatile struct scan_buffer *buffer_head;
 volatile struct scan_buffer *buffer_tail;
 volatile struct scan_buffer *buffer_current;
 
-volatile enum scan_state state = SCAN_START;
 volatile struct scan_code code;
 
 inline void buffer_insert(volatile struct scan_code code)

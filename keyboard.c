@@ -45,10 +45,8 @@ void keyboard_interrupt(void) {
     if (PIND & (1<<PD3))
       c.value |= 0x80;
     c.nbits += 1;
-    if (c.nbits == 8) {
-      c.nbits = 0;
+    if (c.nbits == 8)
       state = KEYBOARD_PARITY;
-    }
     break;
   case KEYBOARD_PARITY:
     state = KEYBOARD_END;

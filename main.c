@@ -36,10 +36,10 @@ ISR(INT0_vect) {
 
 int main(void) {
   int i;
-  uart_init();
+  usart_init();
   keyboard_init();
 
-  stdout = &uart_output;
+  stdout = &usart_output;
 
   // enable interrupts
   sei();

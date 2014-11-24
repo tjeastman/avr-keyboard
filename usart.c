@@ -4,7 +4,7 @@
 
 #include "usart.h"
 
-void uart_init(void) {
+void usart_init(void) {
     UBRR0H = UBRRH_VALUE;
     UBRR0L = UBRRL_VALUE;
 
@@ -18,14 +18,14 @@ void uart_init(void) {
     UCSR0B = _BV(RXEN0) | _BV(TXEN0); // enable RX and TX
 }
 
-void my_putchar(char c) {
+void usart_putchar(char c) {
   loop_until_bit_is_set(UCSR0A, UDRE0);
   UDR0 = c;
 }
 
-int my_putchar_printf(char c, FILE *stream) {
-  my_putchar(c);
+int usart_putchar_printf(char c, FILE *stream) {
+  usart_putchar(c);
   return 0;
 }
 
-FILE uart_output = FDEV_SETUP_STREAM(my_putchar_printf, NULL, _FDEV_SETUP_WRITE);
+FILE usart_output = FDEV_SETUP_STREAM(usart_putchar_printf, NULL, _FDEV_SETUP_WRITE);

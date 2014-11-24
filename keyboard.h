@@ -5,10 +5,10 @@
 
 enum scan_state
 {
-  SCAN_START = 0,
-  SCAN_DATA = 1,
-  SCAN_PARITY = 2,
-  SCAN_END = 3,
+  SCAN_START,
+  SCAN_DATA,
+  SCAN_PARITY,
+  SCAN_END
 };
 
 struct scan_code

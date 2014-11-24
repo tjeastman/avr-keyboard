@@ -6,7 +6,8 @@ volatile struct scan_buffer *buffer_head;
 volatile struct scan_buffer *buffer_tail;
 volatile struct scan_buffer *buffer_current;
 
-void keyboard_init(void) {
+void keyboard_init(void)
+{
   int i;
 
   // initialize empty circular linked list buffer of scan codes
@@ -50,7 +51,8 @@ inline enum scan_state scan_state_transition(enum scan_state state, struct scan_
   return state;
 }
 
-void keyboard_interrupt(void) {
+void keyboard_interrupt(void)
+{
   static enum scan_state state = SCAN_START;
   static struct scan_code c;
 

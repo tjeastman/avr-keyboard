@@ -8,7 +8,8 @@
 
 ISR(INT0_vect) { keyboard_interrupt(); }
 
-int main(void) {
+int main(void)
+{
   int i, size, item;
   usart_init();
   keyboard_init();

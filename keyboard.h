@@ -16,6 +16,7 @@ struct scan_code
   uint8_t value;
   uint8_t nbits; // number of bits received from the device
   uint8_t parity;
+  enum scan_state state;
 };
 
 struct scan_buffer

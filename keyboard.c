@@ -6,6 +6,17 @@ volatile struct scan_buffer *buffer_head;
 volatile struct scan_buffer *buffer_tail;
 volatile struct scan_buffer *buffer_current;
 
+volatile enum scan_state state = SCAN_START;
+volatile struct scan_code code;
+
+inline void scan_code_reset(volatile struct scan_code *code)
+{
+  code->value = 0;
+  code->parity = 0;
+  code->nbits = 0;
+  code->state = SCAN_START;
+}
+
 void keyboard_init(void)
 {
   int i;
@@ -20,19 +31,14 @@ void keyboard_init(void)
   }
   buffer_current->next = buffer_head;
 
+  scan_code_reset(&code);
+
   // enable pull-up resistors on PD2 and PD3
   PORTD = 1<<PD2 | 1<<PD3;
 
   // enable INT0 and trigger on falling edge
   EIMSK |= 1<<INT0;
   EICRA |= 1<<ISC01 | 0<<ISC00;
-}
-
-inline void scan_code_reset(struct scan_code *code)
-{
-  code->value = 0;
-  code->parity = 0;
-  code->nbits = 0;
 }
 
 inline enum scan_state scan_state_transition(enum scan_state state, struct scan_code code)
@@ -53,33 +59,29 @@ inline enum scan_state scan_state_transition(enum scan_state state, struct scan_
 
 void keyboard_interrupt(void)
 {
-  static enum scan_state state = SCAN_START;
-  static struct scan_code code;
-
-  switch (state) {
+  switch (code.state) {
   case SCAN_START:
-    state = scan_state_transition(state, code);
-    scan_code_reset(&code);
+    code.state = scan_state_transition(code.state, code);
     break;
   case SCAN_DATA:
     code.value = code.value >> 1;
     if (PIND & (1<<PD3))
       code.value |= 0x80;
     code.nbits += 1;
-    state = scan_state_transition(state, code);
+    code.state = scan_state_transition(code.state, code);
     break;
   case SCAN_PARITY:
-    state = scan_state_transition(state, code);
+    code.state = scan_state_transition(code.state, code);
     code.parity = PIND & (1<<PD3) ? 1 : 0;
     break;
   case SCAN_END:
-    state = scan_state_transition(state, code);
     // put the scan code into the buffer
     buffer_head->state = SCAN_END;
     buffer_head->code.value = code.value;
     buffer_head->code.nbits = code.nbits;
     buffer_head->code.parity = code.parity;
     buffer_head = buffer_head->next;
+    scan_code_reset(&code);
     break;
   default:
     break;

@@ -9,6 +9,18 @@
 unsigned char keyboard_buffer[100];
 int keyboard_buffer_pos = 0;
 
+int get_buffer_size(void) {
+  return keyboard_buffer_pos;
+}
+
+unsigned char get_buffer_item(int i) {
+  return keyboard_buffer[i];
+}
+
+void reset_buffer(void) {
+  keyboard_buffer_pos = 0;
+}
+
 ISR(INT0_vect) {
   static kstate keyboard_state = KEYBOARD_START;
   static int keyboard_bits_read = 0;
@@ -42,7 +54,7 @@ ISR(INT0_vect) {
 }
 
 int main(void) {
-  int i;
+  int i, size, item;
   usart_init();
   keyboard_init();
 
@@ -52,13 +64,15 @@ int main(void) {
   sei();
 
   while (1) {
-    for (i = 0; i < keyboard_buffer_pos; ++i) {
-      printf("0x%x [%d] ", keyboard_buffer[i], keyboard_buffer[i]);
+    size = get_buffer_size();
+    for (i = 0; i < size; ++i) {
+      item = get_buffer_item(i);
+      printf("0x%x [%d] ", item, item);
     }
-    if (keyboard_buffer_pos > 0) {
+    if (size > 0) {
       printf("\r\n");
     }
-    keyboard_buffer_pos = 0;
+    reset_buffer();
     _delay_ms(4000);
   }
 

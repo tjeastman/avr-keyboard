@@ -6,7 +6,7 @@ typedef enum {
   KEYBOARD_SCAN = 1,
   KEYBOARD_PARITY = 2,
   KEYBOARD_END = 3,
-} kstate;
+} scan_state;
 
 typedef struct {
   uint8_t value;

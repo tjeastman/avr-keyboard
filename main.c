@@ -1,17 +1,10 @@
-#include <avr/io.h>
 #include <stdio.h>
 
 #include <util/delay.h>
 #include <avr/interrupt.h>
 
 #include "usart.h"
-
-typedef enum {
-  KEYBOARD_START = 0,
-  KEYBOARD_SCAN = 1,
-  KEYBOARD_PARITY = 2,
-  KEYBOARD_END = 3,
-} kstate;
+#include "keyboard.h"
 
 unsigned char keyboard_buffer[100];
 int keyboard_buffer_pos = 0;
@@ -39,15 +32,6 @@ ISR(INT0_vect) {
     keyboard_value = 0;
     keyboard_buffer_pos += 1;
   }
-}
-
-void keyboard_init(void) {
-  // enable pull-up resistors on PD2 and PD3
-  PORTD = 1<<PD2 | 1<<PD3;
-
-  // enable INT0 and trigger on falling edge
-  EIMSK |= 1<<INT0;
-  EICRA |= 1<<ISC01 | 0<<ISC00;
 }
 
 int main(void) {

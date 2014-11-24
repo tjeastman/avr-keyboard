@@ -25,34 +25,32 @@ inline void scan_code_reset(volatile struct scan_code *code)
   code->state = SCAN_START;
 }
 
-inline enum scan_state scan_state_transition(struct scan_code code)
+inline void scan_state_transition(volatile struct scan_code *code)
 {
-  if (code.state == SCAN_START)
-    return SCAN_DATA;
-  else if (code.state == SCAN_DATA && code.nbits < 8)
-    return SCAN_DATA;
-  else if (code.state == SCAN_DATA && code.nbits == 8)
-    return SCAN_PARITY;
-  else if (code.state == SCAN_PARITY)
-    return SCAN_END;
-  else if (code.state == SCAN_END)
-    return SCAN_START;
-
-  return code.state;
+  if (code->state == SCAN_START)
+    code->state = SCAN_DATA;
+  else if (code->state == SCAN_DATA && code->nbits < 8)
+    code->state = SCAN_DATA;
+  else if (code->state == SCAN_DATA && code->nbits == 8)
+    code->state = SCAN_PARITY;
+  else if (code->state == SCAN_PARITY)
+    code->state = SCAN_END;
+  else if (code->state == SCAN_END)
+    code->state = SCAN_START;
 }
 
 void keyboard_interrupt(void)
 {
   if (code.state == SCAN_START) {
-    code.state = scan_state_transition(code);
+    scan_state_transition(&code);
   } else if (code.state == SCAN_DATA) {
     code.value = code.value >> 1;
     if (PIND & (1<<PD3))
       code.value |= 0x80;
     code.nbits += 1;
-    code.state = scan_state_transition(code);
+    scan_state_transition(&code);
   } else if (code.state ==  SCAN_PARITY) {
-    code.state = scan_state_transition(code);
+    scan_state_transition(&code);
     code.parity = PIND & (1<<PD3) ? 1 : 0;
   } else if (code.state == SCAN_END) {
     // put the scan code into the buffer

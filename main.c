@@ -18,16 +18,17 @@ int main(void) {
   // enable interrupts
   sei();
 
+  printf("Hello\r\n");
+
   while (1) {
-    size = get_buffer_size();
-    for (i = 0; i < size; ++i) {
-      item = get_buffer_item(i);
-      printf("0x%x [%d] ", item, item);
+    if (buffer_tail != buffer_head) {
+      if (buffer_tail->state == SCAN_END && buffer_tail->code.nbits == 8) {
+        printf("0x%x [%d] (%d)\r\n", buffer_tail->code.value, buffer_tail->code.value, buffer_tail->code.parity);
+        buffer_tail = buffer_tail->next;
+      }
+    } else {
+      printf("Nothing\r\n");
     }
-    if (size > 0) {
-      printf("\r\n");
-    }
-    reset_buffer();
     _delay_ms(4000);
   }
 

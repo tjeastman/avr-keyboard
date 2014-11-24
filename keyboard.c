@@ -17,30 +17,6 @@ inline void scan_code_reset(volatile struct scan_code *code)
   code->state = SCAN_START;
 }
 
-void keyboard_init(void)
-{
-  int i;
-
-  // initialize empty circular linked list buffer of scan codes
-  buffer_head = (struct scan_buffer *)malloc(sizeof(struct scan_buffer));
-  buffer_tail = buffer_head;
-  buffer_current = buffer_head;
-  for (i = 1; i < BUFFER_SIZE; ++i) {
-    buffer_current->next = (struct scan_buffer *)malloc(sizeof(struct scan_buffer));
-    buffer_current = buffer_current->next;
-  }
-  buffer_current->next = buffer_head;
-
-  scan_code_reset(&code);
-
-  // enable pull-up resistors on PD2 and PD3
-  PORTD = 1<<PD2 | 1<<PD3;
-
-  // enable INT0 and trigger on falling edge
-  EIMSK |= 1<<INT0;
-  EICRA |= 1<<ISC01 | 0<<ISC00;
-}
-
 inline enum scan_state scan_state_transition(enum scan_state state, struct scan_code code)
 {
   if (state == SCAN_START)
@@ -86,4 +62,28 @@ void keyboard_interrupt(void)
   default:
     break;
   }
+}
+
+void keyboard_init(void)
+{
+  int i;
+
+  // initialize empty circular linked list buffer of scan codes
+  buffer_head = (struct scan_buffer *)malloc(sizeof(struct scan_buffer));
+  buffer_tail = buffer_head;
+  buffer_current = buffer_head;
+  for (i = 1; i < BUFFER_SIZE; ++i) {
+    buffer_current->next = (struct scan_buffer *)malloc(sizeof(struct scan_buffer));
+    buffer_current = buffer_current->next;
+  }
+  buffer_current->next = buffer_head;
+
+  scan_code_reset(&code);
+
+  // enable pull-up resistors on PD2 and PD3
+  PORTD = 1<<PD2 | 1<<PD3;
+
+  // enable INT0 and trigger on falling edge
+  EIMSK |= 1<<INT0;
+  EICRA |= 1<<ISC01 | 0<<ISC00;
 }

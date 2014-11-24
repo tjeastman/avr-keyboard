@@ -43,28 +43,21 @@ inline enum scan_state scan_state_transition(struct scan_code code)
 
 void keyboard_interrupt(void)
 {
-  switch (code.state) {
-  case SCAN_START:
+  if (code.state == SCAN_START) {
     code.state = scan_state_transition(code);
-    break;
-  case SCAN_DATA:
+  } else if (code.state == SCAN_DATA) {
     code.value = code.value >> 1;
     if (PIND & (1<<PD3))
       code.value |= 0x80;
     code.nbits += 1;
     code.state = scan_state_transition(code);
-    break;
-  case SCAN_PARITY:
+  } else if (code.state ==  SCAN_PARITY) {
     code.state = scan_state_transition(code);
     code.parity = PIND & (1<<PD3) ? 1 : 0;
-    break;
-  case SCAN_END:
+  } else if (code.state == SCAN_END) {
     // put the scan code into the buffer
     buffer_insert(code);
     scan_code_reset(&code);
-    break;
-  default:
-    break;
   }
 }
 

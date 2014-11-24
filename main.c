@@ -41,17 +41,21 @@ ISR(INT0_vect) {
   }
 }
 
-int main(void) {
-  int i;
-  uart_init();
-  stdout = &uart_output;
-
+void keyboard_init(void) {
   // enable pull-up resistors on PD2 and PD3
   PORTD = 1<<PD2 | 1<<PD3;
 
   // enable INT0 and trigger on falling edge
   EIMSK |= 1<<INT0;
   EICRA |= 1<<ISC01 | 0<<ISC00;
+}
+
+int main(void) {
+  int i;
+  uart_init();
+  keyboard_init();
+
+  stdout = &uart_output;
 
   // enable interrupts
   sei();

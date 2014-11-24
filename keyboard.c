@@ -30,30 +30,30 @@ void reset_buffer(void) {
 }
 
 void keyboard_interrupt(void) {
-  static scan_state state = KEYBOARD_START;
+  static scan_state state = SCAN_START;
   static scan_code c;
 
   switch (state) {
-  case KEYBOARD_START:
-    state = KEYBOARD_SCAN;
+  case SCAN_START:
+    state = SCAN_SCAN;
     c.value = 0;
     c.nbits = 0;
     c.parity = 0;
     break;
-  case KEYBOARD_SCAN:
+  case SCAN_SCAN:
     c.value = c.value >> 1;
     if (PIND & (1<<PD3))
       c.value |= 0x80;
     c.nbits += 1;
     if (c.nbits == 8)
-      state = KEYBOARD_PARITY;
+      state = SCAN_PARITY;
     break;
-  case KEYBOARD_PARITY:
-    state = KEYBOARD_END;
+  case SCAN_PARITY:
+    state = SCAN_END;
     c.parity = PIND & (1<<PD3) ? 1 : 0;
     break;
-  case KEYBOARD_END:
-    state = KEYBOARD_START;
+  case SCAN_END:
+    state = SCAN_START;
     keyboard_buffer[keyboard_buffer_pos] = c.value;
     keyboard_buffer_pos += 1;
     break;

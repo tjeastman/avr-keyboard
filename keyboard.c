@@ -17,37 +17,37 @@ inline void scan_code_reset(volatile struct scan_code *code)
   code->state = SCAN_START;
 }
 
-inline enum scan_state scan_state_transition(enum scan_state state, struct scan_code code)
+inline enum scan_state scan_state_transition(struct scan_code code)
 {
-  if (state == SCAN_START)
+  if (code.state == SCAN_START)
     return SCAN_DATA;
-  else if (state == SCAN_DATA && code.nbits < 8)
+  else if (code.state == SCAN_DATA && code.nbits < 8)
     return SCAN_DATA;
-  else if (state == SCAN_DATA && code.nbits == 8)
+  else if (code.state == SCAN_DATA && code.nbits == 8)
     return SCAN_PARITY;
-  else if (state == SCAN_PARITY)
+  else if (code.state == SCAN_PARITY)
     return SCAN_END;
-  else if (state == SCAN_END)
+  else if (code.state == SCAN_END)
     return SCAN_START;
 
-  return state;
+  return code.state;
 }
 
 void keyboard_interrupt(void)
 {
   switch (code.state) {
   case SCAN_START:
-    code.state = scan_state_transition(code.state, code);
+    code.state = scan_state_transition(code);
     break;
   case SCAN_DATA:
     code.value = code.value >> 1;
     if (PIND & (1<<PD3))
       code.value |= 0x80;
     code.nbits += 1;
-    code.state = scan_state_transition(code.state, code);
+    code.state = scan_state_transition(code);
     break;
   case SCAN_PARITY:
-    code.state = scan_state_transition(code.state, code);
+    code.state = scan_state_transition(code);
     code.parity = PIND & (1<<PD3) ? 1 : 0;
     break;
   case SCAN_END:

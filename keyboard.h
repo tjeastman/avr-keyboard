@@ -9,4 +9,12 @@ typedef enum {
 } kstate;
 
 void keyboard_init(void);
+int get_buffer_size(void);
+unsigned char get_buffer_item(int);
+void reset_buffer(void);
+void keyboard_interrupt(void);
+
+extern volatile unsigned char *keyboard_buffer;
+extern volatile int keyboard_buffer_pos;
+
 #endif

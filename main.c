@@ -23,7 +23,7 @@ int main(void)
 
   while (1) {
     if (buffer_tail != buffer_head) {
-      if (buffer_tail->state == SCAN_END && buffer_tail->code.nbits == 8) {
+      if (buffer_tail->code.state == SCAN_END && buffer_tail->code.nbits == 8) {
         printf("0x%x [%d] (%d / %d)\r\n", buffer_tail->code.value, buffer_tail->code.value, buffer_tail->code.parity, buffer_tail->code.nbits);
         buffer_tail = buffer_tail->next;
       }

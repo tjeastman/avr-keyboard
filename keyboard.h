@@ -21,7 +21,6 @@ struct scan_code
 
 struct scan_buffer
 {
-  enum scan_state state;
   struct scan_code code;
   volatile struct scan_buffer *next;
 };

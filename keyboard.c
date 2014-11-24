@@ -52,10 +52,10 @@ void keyboard_interrupt(void)
     break;
   case SCAN_END:
     // put the scan code into the buffer
-    buffer_head->state = SCAN_END;
     buffer_head->code.value = code.value;
     buffer_head->code.nbits = code.nbits;
     buffer_head->code.parity = code.parity;
+    buffer_head->code.state = SCAN_END;
     buffer_head = buffer_head->next;
     scan_code_reset(&code);
     break;

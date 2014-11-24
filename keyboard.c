@@ -9,6 +9,15 @@ volatile struct scan_buffer *buffer_current;
 volatile enum scan_state state = SCAN_START;
 volatile struct scan_code code;
 
+inline void buffer_insert(volatile struct scan_code code)
+{
+  buffer_head->code.value = code.value;
+  buffer_head->code.nbits = code.nbits;
+  buffer_head->code.parity = code.parity;
+  buffer_head->code.state = code.state;
+  buffer_head = buffer_head->next;
+}
+
 inline void scan_code_reset(volatile struct scan_code *code)
 {
   code->value = 0;
@@ -52,11 +61,7 @@ void keyboard_interrupt(void)
     break;
   case SCAN_END:
     // put the scan code into the buffer
-    buffer_head->code.value = code.value;
-    buffer_head->code.nbits = code.nbits;
-    buffer_head->code.parity = code.parity;
-    buffer_head->code.state = code.state;
-    buffer_head = buffer_head->next;
+    buffer_insert(code);
     scan_code_reset(&code);
     break;
   default:

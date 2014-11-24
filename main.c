@@ -26,10 +26,8 @@ int main(void) {
         printf("0x%x [%d] (%d)\r\n", buffer_tail->code.value, buffer_tail->code.value, buffer_tail->code.parity);
         buffer_tail = buffer_tail->next;
       }
-    } else {
-      printf("Nothing\r\n");
     }
-    _delay_ms(4000);
+    _delay_ms(100);
   }
 
   return 0;

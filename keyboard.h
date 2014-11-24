@@ -3,7 +3,7 @@
 
 typedef enum {
   SCAN_START = 0,
-  SCAN_SCAN = 1,
+  SCAN_DATA = 1,
   SCAN_PARITY = 2,
   SCAN_END = 3,
 } scan_state;

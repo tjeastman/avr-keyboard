@@ -35,12 +35,12 @@ void keyboard_interrupt(void) {
 
   switch (state) {
   case SCAN_START:
-    state = SCAN_SCAN;
+    state = SCAN_DATA;
     c.value = 0;
     c.nbits = 0;
     c.parity = 0;
     break;
-  case SCAN_SCAN:
+  case SCAN_DATA:
     c.value = c.value >> 1;
     if (PIND & (1<<PD3))
       c.value |= 0x80;

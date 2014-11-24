@@ -19,7 +19,7 @@ main.elf: $(OBJECTS)
 all: main.hex
 
 flash: main.hex
-	avrdude -p $(DEVICE) -c usbtiny -P usb -U flash:w:main.hex
+	avrdude -p $(DEVICE) -c usbtiny -P usb -qq -U flash:w:main.hex
 
 clean:
 	$(RM) main.hex main.elf main.o usart.o keyboard.o

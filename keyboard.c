@@ -27,6 +27,9 @@ inline void scan_code_reset(volatile struct scan_code *code)
 
 inline void scan_state_transition(volatile struct scan_code *code)
 {
+  if (code->state == SCAN_DATA)
+    code->nbits += 1;
+
   if (code->state == SCAN_START)
     code->state = SCAN_DATA;
   else if (code->state == SCAN_DATA && code->nbits < 8)
@@ -47,7 +50,6 @@ void keyboard_interrupt(void)
     code.value = code.value >> 1;
     if (PIND & (1<<PD3))
       code.value |= 0x80;
-    code.nbits += 1;
     scan_state_transition(&code);
   } else if (code.state ==  SCAN_PARITY) {
     scan_state_transition(&code);

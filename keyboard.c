@@ -39,26 +39,22 @@ inline void scan_state_transition(volatile struct scan_code *code)
   else if (code->state == SCAN_PARITY)
     code->state = SCAN_END;
   else if (code->state == SCAN_END)
-    code->state = SCAN_START;
+    scan_code_reset(code);
 }
 
 void keyboard_interrupt(void)
 {
-  if (code.state == SCAN_START) {
-    scan_state_transition(&code);
-  } else if (code.state == SCAN_DATA) {
+  if (code.state == SCAN_DATA) {
     code.value = code.value >> 1;
     if (PIND & (1<<PD3))
       code.value |= 0x80;
-    scan_state_transition(&code);
   } else if (code.state ==  SCAN_PARITY) {
-    scan_state_transition(&code);
     code.parity = PIND & (1<<PD3) ? 1 : 0;
   } else if (code.state == SCAN_END) {
     // put the scan code into the buffer
     buffer_insert(code);
-    scan_code_reset(&code);
   }
+  scan_state_transition(&code);
 }
 
 void keyboard_init(void)

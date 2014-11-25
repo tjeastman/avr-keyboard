@@ -55,13 +55,11 @@ void keyboard_interrupt(void)
 
 void keyboard_init(void)
 {
-  int i;
-
   // initialize empty circular linked list buffer of scan codes
   buffer_head = (struct scan_buffer *)malloc(sizeof(struct scan_buffer));
   buffer_tail = buffer_head;
   buffer_current = buffer_head;
-  for (i = 1; i < BUFFER_SIZE; ++i) {
+  for (int i = 1; i < BUFFER_SIZE; ++i) {
     buffer_current->next = (struct scan_buffer *)malloc(sizeof(struct scan_buffer));
     buffer_current = buffer_current->next;
   }

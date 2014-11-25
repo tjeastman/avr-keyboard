@@ -7,54 +7,50 @@ volatile struct scan_buffer *buffer_tail;
 volatile struct scan_buffer *buffer_current;
 
 volatile struct scan_code code;
+volatile struct scan_state state;
 
 inline void buffer_insert(volatile struct scan_code code)
 {
   buffer_head->code.value = code.value;
-  buffer_head->code.nbits = code.nbits;
   buffer_head->code.parity = code.parity;
-  buffer_head->code.state = code.state;
   buffer_head = buffer_head->next;
 }
 
-inline void scan_code_reset(volatile struct scan_code *code)
+inline void scan_state_transition(volatile struct scan_state *state)
 {
-  code->value = 0;
-  code->parity = 0;
-  code->nbits = 0;
-  code->state = SCAN_START;
-}
+  if (state->id == SCAN_DATA)
+    state->nbits += 1;
 
-inline void scan_state_transition(volatile struct scan_code *code)
-{
-  if (code->state == SCAN_DATA)
-    code->nbits += 1;
-
-  if (code->state == SCAN_START)
-    code->state = SCAN_DATA;
-  else if (code->state == SCAN_DATA && code->nbits < 8)
-    code->state = SCAN_DATA;
-  else if (code->state == SCAN_DATA && code->nbits == 8)
-    code->state = SCAN_PARITY;
-  else if (code->state == SCAN_PARITY)
-    code->state = SCAN_END;
-  else if (code->state == SCAN_END)
-    scan_code_reset(code);
+  if (state->id == SCAN_START) {
+    state->id = SCAN_DATA;
+    state->nbits = 0;
+  } else if (state->id == SCAN_DATA && state->nbits < 8) {
+    state->id = SCAN_DATA;
+  } else if (state->id == SCAN_DATA && state->nbits == 8) {
+    state->id = SCAN_PARITY;
+  } else if (state->id == SCAN_PARITY) {
+    state->id = SCAN_END;
+  } else if (state->id == SCAN_END) {
+    state->id = SCAN_START;
+  }
 }
 
 void keyboard_interrupt(void)
 {
-  if (code.state == SCAN_DATA) {
+  if (state.id == SCAN_START) {
+    code.value = 0;
+    code.parity = 0;
+  } else if (state.id == SCAN_DATA) {
     code.value = code.value >> 1;
     if (PIND & (1<<PD3))
       code.value |= 0x80;
-  } else if (code.state ==  SCAN_PARITY) {
+  } else if (state.id ==  SCAN_PARITY) {
     code.parity = PIND & (1<<PD3) ? 1 : 0;
-  } else if (code.state == SCAN_END) {
+  } else if (state.id == SCAN_END) {
     // put the scan code into the buffer
     buffer_insert(code);
   }
-  scan_state_transition(&code);
+  scan_state_transition(&state);
 }
 
 void keyboard_init(void)
@@ -71,7 +67,8 @@ void keyboard_init(void)
   }
   buffer_current->next = buffer_head;
 
-  scan_code_reset(&code);
+  // put the key code scanner into the initial state
+  state.id = SCAN_START;
 
   // enable pull-up resistors on PD2 and PD3
   PORTD = 1<<PD2 | 1<<PD3;

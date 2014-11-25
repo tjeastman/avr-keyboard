@@ -3,7 +3,7 @@
 
 #define BUFFER_SIZE 10
 
-enum scan_state
+enum scan_state_id
 {
   SCAN_START,
   SCAN_DATA,
@@ -11,12 +11,16 @@ enum scan_state
   SCAN_END
 };
 
+struct scan_state
+{
+  uint8_t nbits; // number of bits received from the device
+  enum scan_state_id id;
+};
+
 struct scan_code
 {
   uint8_t value;
-  uint8_t nbits; // number of bits received from the device
   uint8_t parity;
-  enum scan_state state;
 };
 
 struct scan_buffer

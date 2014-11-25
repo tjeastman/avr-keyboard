@@ -32,6 +32,8 @@ struct scan_buffer
 void keyboard_init(void);
 void keyboard_interrupt(void);
 
+volatile struct scan_code *buffer_remove(void);
+
 extern volatile struct scan_buffer *buffer_head;
 extern volatile struct scan_buffer *buffer_tail;
 

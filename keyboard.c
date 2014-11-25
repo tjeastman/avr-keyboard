@@ -9,6 +9,16 @@ volatile struct scan_buffer *buffer_current;
 volatile struct scan_code code;
 volatile struct scan_state state;
 
+volatile struct scan_code *buffer_remove(void)
+{
+  volatile struct scan_code *c = NULL;
+  if (buffer_head != buffer_tail) {
+    c = &buffer_tail->code;
+    buffer_tail = buffer_tail->next;
+  }
+  return c;
+}
+
 inline void buffer_insert(volatile struct scan_code code)
 {
   buffer_head->code.value = code.value;

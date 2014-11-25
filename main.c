@@ -10,6 +10,7 @@ ISR(INT0_vect) { keyboard_interrupt(); }
 
 int main(void)
 {
+  volatile struct scan_code *c;
   usart_init();
   keyboard_init();
 
@@ -21,9 +22,8 @@ int main(void)
   printf("Hello\r\n");
 
   while (1) {
-    if (buffer_tail != buffer_head) {
-      printf("0x%x [%d] (%d)\r\n", buffer_tail->code.value, buffer_tail->code.value, buffer_tail->code.parity);
-      buffer_tail = buffer_tail->next;
+    if (c = buffer_remove()) {
+      printf("0x%x [%d] (%d)\r\n", c->value, c->value, c->parity);
     }
     _delay_ms(100);
   }

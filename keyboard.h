@@ -1,7 +1,7 @@
 #ifndef KEYBOARD_H
 #define KEYBOARD_H
 
-#define BUFFER_SIZE 10
+#define SCAN_BUFFER_SIZE 10
 
 #define KEYBOARD_CONCAT(a, b) a ## b
 #define KEYBOARD_PORT_CODE D

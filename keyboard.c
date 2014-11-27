@@ -2,28 +2,27 @@
 #include <stdlib.h>
 #include "keyboard.h"
 
-volatile struct scan_buffer *buffer_head;
-volatile struct scan_buffer *buffer_tail;
-volatile struct scan_buffer *buffer_current;
+volatile struct scan_code scan_buffer[BUFFER_SIZE];
+volatile unsigned int scan_buffer_head = 0;
+volatile unsigned int scan_buffer_tail = 0;
 
 volatile struct scan_code code;
 volatile struct scan_state state;
 
 volatile struct scan_code *buffer_remove(void)
 {
-  volatile struct scan_code *c = NULL;
-  if (buffer_head != buffer_tail) {
-    c = &buffer_tail->code;
-    buffer_tail = buffer_tail->next;
+  volatile struct scan_code *code = NULL;
+  if (scan_buffer_head != scan_buffer_tail) {
+    code = &scan_buffer[scan_buffer_head];
+    scan_buffer_head = (scan_buffer_head + 1) % BUFFER_SIZE;
   }
-  return c;
+  return code;
 }
 
 inline void buffer_insert(volatile struct scan_code code)
 {
-  buffer_head->code.value = code.value;
-  buffer_head->code.parity = code.parity;
-  buffer_head = buffer_head->next;
+  scan_buffer[scan_buffer_tail] = code;
+  scan_buffer_tail = (scan_buffer_tail + 1) % BUFFER_SIZE;
 }
 
 inline void scan_state_transition(volatile struct scan_state *state)
@@ -65,16 +64,6 @@ void keyboard_interrupt(void)
 
 void keyboard_init(void)
 {
-  // initialize empty circular linked list buffer of scan codes
-  buffer_head = (struct scan_buffer *)malloc(sizeof(struct scan_buffer));
-  buffer_tail = buffer_head;
-  buffer_current = buffer_head;
-  for (int i = 1; i < BUFFER_SIZE; ++i) {
-    buffer_current->next = (struct scan_buffer *)malloc(sizeof(struct scan_buffer));
-    buffer_current = buffer_current->next;
-  }
-  buffer_current->next = buffer_head;
-
   // put the key code scanner into the initial state
   state.id = SCAN_START;
 

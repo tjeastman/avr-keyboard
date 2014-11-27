@@ -26,6 +26,6 @@ struct scan_code
 void keyboard_init(void);
 void keyboard_interrupt(void);
 
-volatile struct scan_code *buffer_remove(void);
+volatile struct scan_code *scan_buffer_remove(void);
 
 #endif

@@ -9,7 +9,7 @@ volatile unsigned int scan_buffer_tail = 0;
 volatile struct scan_code code;
 volatile struct scan_state state;
 
-volatile struct scan_code *buffer_remove(void)
+volatile struct scan_code *scan_buffer_remove(void)
 {
   volatile struct scan_code *code = NULL;
   if (scan_buffer_head != scan_buffer_tail) {
@@ -19,7 +19,7 @@ volatile struct scan_code *buffer_remove(void)
   return code;
 }
 
-inline void buffer_insert(volatile struct scan_code code)
+inline void scan_buffer_insert(volatile struct scan_code code)
 {
   scan_buffer[scan_buffer_tail] = code;
   scan_buffer_tail = (scan_buffer_tail + 1) % BUFFER_SIZE;
@@ -57,7 +57,7 @@ void keyboard_interrupt(void)
     code.parity = PIND & (1<<PD3) ? 1 : 0;
   } else if (state.id == SCAN_END) {
     // put the scan code into the buffer
-    buffer_insert(code);
+    scan_buffer_insert(code);
   }
   scan_state_transition(&state);
 }

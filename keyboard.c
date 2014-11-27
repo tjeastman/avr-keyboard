@@ -51,10 +51,9 @@ void keyboard_interrupt(void)
     code.parity = 0;
   } else if (state.id == SCAN_DATA) {
     code.value = code.value >> 1;
-    if (PIND & (1<<PD3))
-      code.value |= 0x80;
+    code.value |= (read_keyboard_data() << 7);
   } else if (state.id ==  SCAN_PARITY) {
-    code.parity = PIND & (1<<PD3) ? 1 : 0;
+    code.parity = read_keyboard_data();
   } else if (state.id == SCAN_END) {
     // put the scan code into the buffer
     scan_buffer_insert(code);

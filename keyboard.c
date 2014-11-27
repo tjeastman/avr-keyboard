@@ -6,8 +6,8 @@ volatile struct scan_code scan_buffer[BUFFER_SIZE];
 volatile unsigned int scan_buffer_head = 0;
 volatile unsigned int scan_buffer_tail = 0;
 
+volatile struct scan_state state = { SCAN_START, 0 };
 volatile struct scan_code code;
-volatile struct scan_state state;
 
 volatile struct scan_code *scan_buffer_remove(void)
 {
@@ -64,9 +64,6 @@ void keyboard_interrupt(void)
 
 void keyboard_init(void)
 {
-  // put the key code scanner into the initial state
-  state.id = SCAN_START;
-
   // enable pull-up resistors on PD2 and PD3
   PORTD = 1<<PD2 | 1<<PD3;
 

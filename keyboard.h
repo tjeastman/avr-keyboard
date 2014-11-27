@@ -13,8 +13,8 @@ enum scan_state_id
 
 struct scan_state
 {
-  uint8_t nbits; // number of bits received from the device
   enum scan_state_id id;
+  uint8_t nbits; // number of bits received from the device
 };
 
 struct scan_code

@@ -23,18 +23,9 @@ struct scan_code
   uint8_t parity;
 };
 
-struct scan_buffer
-{
-  struct scan_code code;
-  volatile struct scan_buffer *next;
-};
-
 void keyboard_init(void);
 void keyboard_interrupt(void);
 
 volatile struct scan_code *buffer_remove(void);
-
-extern volatile struct scan_buffer *buffer_head;
-extern volatile struct scan_buffer *buffer_tail;
 
 #endif

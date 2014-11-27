@@ -102,7 +102,7 @@ char *decode(volatile struct scan_code *c)
     return NULL;
   }
 
-  for (int i = 0; i < 60; ++i) {
+  for (int i = 0; i < 67; ++i) {
     if (keys[i].value == c->value) {
       return keys[i].label;
     }

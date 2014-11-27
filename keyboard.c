@@ -55,7 +55,6 @@ void keyboard_interrupt(void)
   } else if (state.id ==  SCAN_PARITY) {
     code.parity = read_keyboard_data();
   } else if (state.id == SCAN_END) {
-    // put the scan code into the buffer
     scan_buffer_insert(code);
   }
   scan_state_transition(&state);

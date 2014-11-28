@@ -62,8 +62,8 @@ void keyboard_interrupt(void)
 
 void keyboard_init(void)
 {
-  // enable pull-up resistors on PD2 and PD3
-  PORTD = 1<<PD2 | 1<<PD3;
+  // enable pull-up resistors
+  KEYBOARD_PORT |= _BV(KEYBOARD_CLOCK_PIN_NUM) | _BV(KEYBOARD_DATA_PIN_NUM);
 
   // enable INT0 and trigger on falling edge
   EIMSK |= 1<<INT0;

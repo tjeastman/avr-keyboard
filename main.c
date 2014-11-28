@@ -104,11 +104,11 @@ int compare_keys(const void *k1, const void *k2)
   return key1->value - key2->value;
 }
 
-char *lookup_key(volatile struct scan_code *c, int current_keys_len, struct key *current_keys)
+char *lookup_key(volatile struct scan_code *code, int current_keys_len, struct key *current_keys)
 {
   struct key search_key;
   struct key *found_key;
-  search_key.value = c->value;
+  search_key.value = code->value;
   found_key = bsearch(&search_key, current_keys, current_keys_len, sizeof(struct key), compare_keys);
   if (found_key) {
     return found_key->label;
@@ -117,7 +117,7 @@ char *lookup_key(volatile struct scan_code *c, int current_keys_len, struct key 
   }
 }
 
-char *decode(volatile struct scan_code *c)
+char *decode(volatile struct scan_code *code)
 {
   static uint8_t shift_key_pressed = 0;
   static uint8_t release_key_pressed = 0;
@@ -125,7 +125,7 @@ char *decode(volatile struct scan_code *c)
   static int current_keys_len = 67;
   char *label = NULL;
 
-  if (is_extended_code(c)) {
+  if (is_extended_code(code)) {
     // swap in a new "page" of scan codes
     current_keys = extended_keys;
     current_keys_len = 6;
@@ -134,10 +134,10 @@ char *decode(volatile struct scan_code *c)
 
   if (release_key_pressed) {
     release_key_pressed = 0;
-  } else if (is_release_code(c)) {
+  } else if (is_release_code(code)) {
     release_key_pressed = 1;
   } else {
-    label = lookup_key(c, current_keys_len, current_keys);
+    label = lookup_key(code, current_keys_len, current_keys);
   }
 
   // switch back to the default "page" of scan codes

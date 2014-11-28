@@ -13,8 +13,6 @@ struct key {
   uint8_t value;
 };
 
-uint8_t RELEASE_KEY_VALUE = 0xF0;
-uint8_t EXTENDED_KEY_VALUE = 0xE0;
 uint8_t LEFT_SHIFT_VALUE = 0x12;
 uint8_t RIGHT_SHIFT_VALUE = 0x59;
 
@@ -127,7 +125,7 @@ char *decode(volatile struct scan_code *c)
   static int current_keys_len = 67;
   char *label = NULL;
 
-  if (c->value == EXTENDED_KEY_VALUE) {
+  if (is_extended_code(c)) {
     // swap in a new "page" of scan codes
     current_keys = extended_keys;
     current_keys_len = 6;
@@ -136,7 +134,7 @@ char *decode(volatile struct scan_code *c)
 
   if (release_key_pressed) {
     release_key_pressed = 0;
-  } else if (c->value == RELEASE_KEY_VALUE) {
+  } else if (is_release_code(c)) {
     release_key_pressed = 1;
   } else {
     label = lookup_key(c, current_keys_len, current_keys);

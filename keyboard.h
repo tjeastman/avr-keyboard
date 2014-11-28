@@ -3,6 +3,9 @@
 
 #define SCAN_BUFFER_SIZE 10
 
+#define RELEASE_KEY_VALUE 0xF0;
+#define EXTENDED_KEY_VALUE 0xE0;
+
 #define KEYBOARD_CONCAT(a, b) a ## b
 #define KEYBOARD_CONCAT_EXPAND(a, b) KEYBOARD_CONCAT(a, b)
 
@@ -47,5 +50,8 @@ void keyboard_init(void);
 void keyboard_interrupt(void);
 
 volatile struct scan_code *scan_buffer_remove(void);
+
+int is_release_code(volatile struct scan_code *code);
+int is_extended_code(volatile struct scan_code *code);
 
 #endif

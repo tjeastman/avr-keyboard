@@ -70,3 +70,13 @@ void keyboard_init(void)
   // trigger the keyboard interrupt on the falling edge
   EICRA |= _BV(KEYBOARD_INTERRUPT_CTRL);
 }
+
+int is_release_code(volatile struct scan_code *code)
+{
+  return code->value == RELEASE_KEY_VALUE;
+}
+
+int is_extended_code(volatile struct scan_code *code)
+{
+  return code->value == EXTENDED_KEY_VALUE;
+}

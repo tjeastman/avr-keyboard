@@ -6,7 +6,7 @@
 #include "usart.h"
 #include "keyboard.h"
 
-ISR(KEYBOARD_INTERRUPT_VECTOR) { keyboard_interrupt(); }
+setup_keyboard_interrupt();
 
 struct key {
   char *label;

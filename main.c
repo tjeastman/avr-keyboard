@@ -95,15 +95,19 @@ struct key keys[] =
 struct key extended_keys[] =
   {
     {"[END]", 0x69},
+    {"[LEFT]", 0x6B},
     {"[HOME]", 0x6C},
     {"[INS]", 0x70},
     {"[DEL]", 0x71},
+    {"[DOWN]", 0x72},
+    {"[RIGHT]", 0x74},
+    {"[UP]", 0x75},
     {"[PGDOWN]", 0x7A},
     {"[PGUP]", 0x7D}
   };
 
 struct key_page default_key_page = { keys, 67 };
-struct key_page extended_key_page = { extended_keys, 6 };
+struct key_page extended_key_page = { extended_keys, 10 };
 
 int compare_keys(const void *k1, const void *k2)
 {

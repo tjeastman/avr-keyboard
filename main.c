@@ -82,10 +82,10 @@ struct key keys[] =
     {"]", 0x5B},
     {"\\", 0x5D},
     {"[BACKSPACE]", 0x66},
-    {"[SCROLL]", 0x7E},
     {"[ESC]", 0x76},
     {"[NUM]", 0x77},
     {"[F11]", 0x78},
+    {"[SCROLL]", 0x7E},
     {"[F7]", 0x83}
   };
 

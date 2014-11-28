@@ -14,7 +14,7 @@ volatile struct scan_code *scan_buffer_remove(void)
   volatile struct scan_code *code = NULL;
   if (scan_buffer_head != scan_buffer_tail) {
     code = &scan_buffer[scan_buffer_head];
-    scan_buffer_head = (scan_buffer_head + 1) % SCAN_BUFFER_SIZE;
+    scan_buffer_head = scan_buffer_increment(scan_buffer_head);
   }
   return code;
 }
@@ -22,7 +22,7 @@ volatile struct scan_code *scan_buffer_remove(void)
 inline void scan_buffer_insert(volatile struct scan_code code)
 {
   scan_buffer[scan_buffer_tail] = code;
-  scan_buffer_tail = (scan_buffer_tail + 1) % SCAN_BUFFER_SIZE;
+  scan_buffer_tail = scan_buffer_increment(scan_buffer_tail);
 }
 
 inline void scan_state_transition(volatile struct scan_state *state)

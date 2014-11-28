@@ -25,6 +25,7 @@
 
 #define read_keyboard_data() (KEYBOARD_PIN & (1 << KEYBOARD_DATA_PIN_NUM) ? 1 : 0)
 #define setup_keyboard_interrupt() ISR(KEYBOARD_INTERRUPT_VECTOR) { keyboard_interrupt(); }
+#define scan_buffer_increment(name) ((name) + 1) % SCAN_BUFFER_SIZE
 
 enum scan_state_id
 {

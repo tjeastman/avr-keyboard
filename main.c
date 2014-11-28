@@ -13,6 +13,11 @@ struct key {
   uint8_t value;
 };
 
+struct key_page {
+  struct key *keys;
+  unsigned int size;
+};
+
 uint8_t LEFT_SHIFT_VALUE = 0x12;
 uint8_t RIGHT_SHIFT_VALUE = 0x59;
 
@@ -97,6 +102,9 @@ struct key extended_keys[] =
     {"[PGUP]", 0x7D}
   };
 
+struct key_page default_key_page = { keys, 67 };
+struct key_page extended_key_page = { extended_keys, 6 };
+
 int compare_keys(const void *k1, const void *k2)
 {
   struct key *key1 = (struct key *)k1;
@@ -121,14 +129,12 @@ char *decode(volatile struct scan_code *code)
 {
   static uint8_t shift_key_pressed = 0;
   static uint8_t release_key_pressed = 0;
-  static struct key *current_keys = keys;
-  static int current_keys_len = 67;
+  static struct key_page *current_keys = &default_key_page;
   char *label = NULL;
 
   if (is_extended_code(code)) {
     // swap in a new "page" of scan codes
-    current_keys = extended_keys;
-    current_keys_len = 6;
+    current_keys = &extended_key_page;
     return NULL;
   }
 
@@ -137,12 +143,11 @@ char *decode(volatile struct scan_code *code)
   } else if (is_release_code(code)) {
     release_key_pressed = 1;
   } else {
-    label = lookup_key(code, current_keys_len, current_keys);
+    label = lookup_key(code, current_keys->size, current_keys->keys);
   }
 
   // switch back to the default "page" of scan codes
-  current_keys = keys;
-  current_keys_len = 67;
+  current_keys = &default_key_page;
 
   return label;
 }

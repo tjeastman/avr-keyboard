@@ -1,4 +1,5 @@
 #include <avr/io.h>
+#include <avr/interrupt.h>
 #include <stdlib.h>
 #include "keyboard.h"
 
@@ -69,6 +70,9 @@ void keyboard_init(void)
   EIMSK |= _BV(KEYBOARD_INTERRUPT);
   // trigger the keyboard interrupt on the falling edge
   EICRA |= _BV(KEYBOARD_INTERRUPT_CTRL);
+
+  // enable interrupts
+  sei();
 }
 
 int is_release_code(volatile struct scan_code *code)

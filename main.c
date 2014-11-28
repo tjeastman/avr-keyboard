@@ -1,5 +1,5 @@
 #include <stdio.h>
-
+#include <stdlib.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
 
@@ -89,10 +89,19 @@ struct key keys[] =
     {"[F7]", 0x83}
   };
 
+int compare_keys(const void *k1, const void *k2)
+{
+  struct key *key1 = (struct key *)k1;
+  struct key *key2 = (struct key *)k2;
+  return key1->value - key2->value;
+}
+
 char *decode(volatile struct scan_code *c)
 {
   static uint8_t shift_key_pressed = 0;
   static uint8_t release_key_pressed = 0;
+  struct key search_key;
+  struct key *found_key;
 
   if (release_key_pressed) {
     release_key_pressed = 0;
@@ -102,10 +111,11 @@ char *decode(volatile struct scan_code *c)
     return NULL;
   }
 
-  for (int i = 0; i < 67; ++i) {
-    if (keys[i].value == c->value) {
-      return keys[i].label;
-    }
+  search_key.value = c->value;
+  found_key = bsearch(&search_key, keys, 67, sizeof(struct key), compare_keys);
+
+  if (found_key) {
+    return found_key->label;
   }
   return NULL;
 }

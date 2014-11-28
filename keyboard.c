@@ -65,7 +65,7 @@ void keyboard_init(void)
   // enable pull-up resistors
   KEYBOARD_PORT |= _BV(KEYBOARD_CLOCK_PIN_NUM) | _BV(KEYBOARD_DATA_PIN_NUM);
 
-  // enable INT0 and trigger on falling edge
-  EIMSK |= 1<<INT0;
+  // enable the interrupt and trigger it on the falling edge
+  EIMSK |= _BV(KEYBOARD_INTERRUPT);
   EICRA |= 1<<ISC01 | 0<<ISC00;
 }

@@ -112,12 +112,12 @@ int compare_keys(const void *k1, const void *k2)
   return key1->value - key2->value;
 }
 
-char *lookup_key(volatile struct scan_code *code, int current_keys_len, struct key *current_keys)
+char *lookup_key(volatile struct scan_code *code, struct key_page *current_keys)
 {
   struct key search_key;
   struct key *found_key;
   search_key.value = code->value;
-  found_key = bsearch(&search_key, current_keys, current_keys_len, sizeof(struct key), compare_keys);
+  found_key = bsearch(&search_key, current_keys->keys, current_keys->size, sizeof(struct key), compare_keys);
   if (found_key) {
     return found_key->label;
   } else {
@@ -143,7 +143,7 @@ char *decode(volatile struct scan_code *code)
   } else if (is_release_code(code)) {
     release_key_pressed = 1;
   } else {
-    label = lookup_key(code, current_keys->size, current_keys->keys);
+    label = lookup_key(code, current_keys);
   }
 
   // switch back to the default "page" of scan codes

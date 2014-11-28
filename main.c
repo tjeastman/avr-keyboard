@@ -89,6 +89,16 @@ struct key keys[] =
     {"[F7]", 0x83}
   };
 
+struct key extended_keys[] =
+  {
+    {"[END]", 0x69},
+    {"[HOME]", 0x6C},
+    {"[INS]", 0x70},
+    {"[DEL]", 0x71},
+    {"[PGDOWN]", 0x7A},
+    {"[PGUP]", 0x7D}
+  };
+
 int compare_keys(const void *k1, const void *k2)
 {
   struct key *key1 = (struct key *)k1;
@@ -100,19 +110,38 @@ char *decode(volatile struct scan_code *c)
 {
   static uint8_t shift_key_pressed = 0;
   static uint8_t release_key_pressed = 0;
+  static struct key *current_keys = keys;
+  static int current_keys_len = 67;
   struct key search_key;
   struct key *found_key;
 
+  if (c->value == EXTENDED_KEY_VALUE) {
+    // swap in a new "page" of scan codes
+    current_keys = extended_keys;
+    current_keys_len = 6;
+    return NULL;
+  }
+
   if (release_key_pressed) {
     release_key_pressed = 0;
+    // switch back to the default "page" of scan codes
+    current_keys = keys;
+    current_keys_len = 67;
     return NULL;
   } else if (c->value == RELEASE_KEY_VALUE) {
     release_key_pressed = 1;
+    // switch back to the default "page" of scan codes
+    current_keys = keys;
+    current_keys_len = 67;
     return NULL;
   }
 
   search_key.value = c->value;
-  found_key = bsearch(&search_key, keys, 67, sizeof(struct key), compare_keys);
+  found_key = bsearch(&search_key, current_keys, current_keys_len, sizeof(struct key), compare_keys);
+
+  // switch back to the default "page" of scan codes
+  current_keys = keys;
+  current_keys_len = 67;
 
   if (found_key) {
     return found_key->label;

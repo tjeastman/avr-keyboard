@@ -1,6 +1,9 @@
 #ifndef AVR_KEYBOARD_STATE_H_
 #define AVR_KEYBOARD_STATE_H_
 
+#define RELEASE_KEY_VALUE 0xF0;
+#define EXTENDED_KEY_VALUE 0xE0;
+
 enum keyboard_modifier_id
 {
   MOD_LEFT_CTRL = 0,
@@ -23,6 +26,13 @@ struct keyboard_state
 
 int keyboard_shift_pressed(struct keyboard_state *);
 int keyboard_ctrl_pressed(struct keyboard_state *);
-void keyboard_state_transition(struct keyboard_state *, struct frame *);
+void keyboard_state_transition(struct keyboard_state *, uint8_t);
+
+int is_code_release(uint8_t);
+int is_code_extended(uint8_t);
+int is_code_left_shift(uint8_t);
+int is_code_right_shift(uint8_t);
+int is_code_left_ctrl(uint8_t);
+int is_code_right_ctrl(uint8_t);
 
 #endif

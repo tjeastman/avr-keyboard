@@ -64,33 +64,3 @@ void keyboard_interrupt(void)
   }
   frame_state_transition(&state);
 }
-
-int is_frame_release(struct frame *frame)
-{
-  return frame->data == RELEASE_KEY_VALUE;
-}
-
-int is_frame_extended(struct frame *frame)
-{
-  return frame->data == EXTENDED_KEY_VALUE;
-}
-
-int is_frame_left_shift(struct frame *frame)
-{
-  return frame->data == 0x12;
-}
-
-int is_frame_right_shift(struct frame *frame)
-{
-  return frame->data == 0x59;
-}
-
-int is_frame_left_ctrl(struct frame *frame)
-{
-  return frame->data == 0;
-}
-
-int is_frame_right_ctrl(struct frame *frame)
-{
-  return frame->data == 0;
-}

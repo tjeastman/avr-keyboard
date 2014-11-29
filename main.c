@@ -173,7 +173,7 @@ char *keyboard_state_label(struct keyboard_state state, struct key *key)
 
 struct key *decode(struct keyboard_state *state, struct frame *frame)
 {
-  keyboard_state_transition(state, frame);
+  keyboard_state_transition(state, frame->data);
 
   if (state->final) {
     // determine what set of keys to use

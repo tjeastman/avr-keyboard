@@ -2,11 +2,39 @@
 #include <stdlib.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
-
 #include "usart.h"
 #include "keyboard.h"
 
 setup_keyboard_interrupt();
+
+enum keyboard_modifier_id
+{
+  MOD_LEFT_CTRL = 0,
+  MOD_LEFT_SHIFT = 1,
+  MOD_LEFT_ALT = 2,
+  MOD_LEFT_GUI = 3,
+  MOD_RIGHT_CTRL = 4,
+  MOD_RIGHT_SHIFT = 5,
+  MOD_RIGHT_ALT = 6,
+  MOD_RIGHT_GUI = 7
+};
+
+struct keyboard_state
+{
+  uint8_t modifiers;
+  uint8_t release_mode;
+};
+
+int keyboard_shift_pressed(struct keyboard_state state)
+{
+  return state.modifiers & (0x01 << MOD_LEFT_SHIFT | 0x01 << MOD_RIGHT_SHIFT);
+}
+
+int keyboard_ctrl_pressed(struct keyboard_state state)
+{
+  return state.modifiers & (0x01 << MOD_LEFT_CTRL | 0x01 << MOD_RIGHT_CTRL);
+}
+
 
 struct key {
   char *label;
@@ -131,8 +159,7 @@ char *lookup_key(volatile struct scan_code *code, struct key_page *current_keys)
 
 char *decode(volatile struct scan_code *code)
 {
-  static uint8_t shift_key_pressed = 0;
-  static uint8_t release_key_pressed = 0;
+  static struct keyboard_state state = { 0, 0 };
   static struct key_page *current_keys = &default_key_page;
   char *label = NULL;
 
@@ -142,10 +169,10 @@ char *decode(volatile struct scan_code *code)
     return NULL;
   }
 
-  if (release_key_pressed) {
-    release_key_pressed = 0;
+  if (state.release_mode) {
+    state.release_mode = 0;
   } else if (is_release_code(code)) {
-    release_key_pressed = 1;
+    state.release_mode = 1;
   } else {
     label = lookup_key(code, current_keys);
   }

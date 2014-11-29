@@ -5,9 +5,9 @@
 #include <avr/wdt.h>
 #include "usbdrv.h"
 #include "usart.h"
-#include "keyboard.h"
-#include "protocol.h"
-#include "state.h"
+#include "keyboard/base.h"
+#include "keyboard/protocol.h"
+#include "keyboard/state.h"
 
 setup_keyboard_interrupt();
 

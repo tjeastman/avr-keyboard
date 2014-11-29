@@ -221,9 +221,8 @@ char *decode(struct scan_code *code)
   static struct keyboard_state state = { 0, 0 };
   static struct key_page *current_keys = &default_key_page;
   char *label = NULL;
-  struct scan_code new_code = *code;
 
-  keyboard_state_transition(&state, &new_code);
+  keyboard_state_transition(&state, code);
 
   if (is_extended_code(code)) {
     // swap in a new "page" of scan codes

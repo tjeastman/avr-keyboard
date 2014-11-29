@@ -84,3 +84,33 @@ int is_extended_code(volatile struct scan_code *code)
 {
   return code->value == EXTENDED_KEY_VALUE;
 }
+
+int is_code_left_shift(struct scan_code *code)
+{
+  return code->value == 0x12;
+}
+
+int is_code_right_shift(struct scan_code *code)
+{
+  return code->value == 0x59;
+}
+
+int is_code_left_ctrl(struct scan_code *code)
+{
+  return code->value == 0;
+}
+
+int is_code_right_ctrl(struct scan_code *code)
+{
+  return code->value == 0;
+}
+
+int keyboard_shift_pressed(struct keyboard_state *state)
+{
+  return state->modifiers & (0x01 << MOD_LEFT_SHIFT | 0x01 << MOD_RIGHT_SHIFT);
+}
+
+int keyboard_ctrl_pressed(struct keyboard_state *state)
+{
+  return state->modifiers & (0x01 << MOD_LEFT_CTRL | 0x01 << MOD_RIGHT_CTRL);
+}

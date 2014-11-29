@@ -55,4 +55,30 @@ volatile struct scan_code *scan_buffer_remove(void);
 int is_release_code(volatile struct scan_code *code);
 int is_extended_code(volatile struct scan_code *code);
 
+enum keyboard_modifier_id
+{
+  MOD_LEFT_CTRL = 0,
+  MOD_LEFT_SHIFT = 1,
+  MOD_LEFT_ALT = 2,
+  MOD_LEFT_GUI = 3,
+  MOD_RIGHT_CTRL = 4,
+  MOD_RIGHT_SHIFT = 5,
+  MOD_RIGHT_ALT = 6,
+  MOD_RIGHT_GUI = 7
+};
+
+struct keyboard_state
+{
+  uint8_t modifiers;
+  uint8_t release_mode;
+};
+
+int is_code_left_shift(struct scan_code *);
+int is_code_right_shift(struct scan_code *);
+int is_code_left_ctrl(struct scan_code *);
+int is_code_right_ctrl(struct scan_code *);
+
+int keyboard_shift_pressed(struct keyboard_state *);
+int keyboard_ctrl_pressed(struct keyboard_state *);
+
 #endif

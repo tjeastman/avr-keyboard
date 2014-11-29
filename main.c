@@ -7,34 +7,30 @@
 
 setup_keyboard_interrupt();
 
-enum keyboard_modifier_id
+void keyboard_state_transition(struct keyboard_state *state, struct scan_code *code)
 {
-  MOD_LEFT_CTRL = 0,
-  MOD_LEFT_SHIFT = 1,
-  MOD_LEFT_ALT = 2,
-  MOD_LEFT_GUI = 3,
-  MOD_RIGHT_CTRL = 4,
-  MOD_RIGHT_SHIFT = 5,
-  MOD_RIGHT_ALT = 6,
-  MOD_RIGHT_GUI = 7
-};
-
-struct keyboard_state
-{
-  uint8_t modifiers;
-  uint8_t release_mode;
-};
-
-int keyboard_shift_pressed(struct keyboard_state state)
-{
-  return state.modifiers & (0x01 << MOD_LEFT_SHIFT | 0x01 << MOD_RIGHT_SHIFT);
+  if (state->release_mode) {
+    if (is_code_left_shift(code)) {
+      state->modifiers &= ~(1 << MOD_LEFT_SHIFT);
+    } else if (is_code_right_shift(code)) {
+      state->modifiers &= ~(1 << MOD_RIGHT_SHIFT);
+    } else if (is_code_left_ctrl(code)) {
+      state->modifiers &= ~(1 << MOD_LEFT_CTRL);
+    } else if (is_code_right_ctrl(code)) {
+      state->modifiers &= ~(1 << MOD_RIGHT_CTRL);
+    }
+  } else {
+    if (is_code_left_shift(code)) {
+      state->modifiers |= (1 << MOD_LEFT_SHIFT);
+    } else if (is_code_right_shift(code)) {
+      state->modifiers |= (1 << MOD_RIGHT_SHIFT);
+    } else if (is_code_left_ctrl(code)) {
+      state->modifiers |= (1 << MOD_LEFT_CTRL);
+    } else if (is_code_right_ctrl(code)) {
+      state->modifiers |= (1 << MOD_RIGHT_CTRL);
+    }
+  }
 }
-
-int keyboard_ctrl_pressed(struct keyboard_state state)
-{
-  return state.modifiers & (0x01 << MOD_LEFT_CTRL | 0x01 << MOD_RIGHT_CTRL);
-}
-
 
 struct key {
   char *label;
@@ -43,11 +39,10 @@ struct key {
 
 struct key_page {
   struct key *keys;
+  struct key *shift_keys;
   unsigned int size;
+  unsigned int shift_size;
 };
-
-uint8_t LEFT_SHIFT_VALUE = 0x12;
-uint8_t RIGHT_SHIFT_VALUE = 0x59;
 
 struct key keys[] =
   {
@@ -120,6 +115,57 @@ struct key keys[] =
     {"[F7]", 0x83}
   };
 
+struct key shift_keys[] =
+  {
+    {"~", 0x0E},
+    {"Q", 0x15},
+    {"!", 0x16},
+    {"Z", 0x1A},
+    {"S", 0x1B},
+    {"A", 0x1C},
+    {"W", 0x1D},
+    {"@", 0x1E},
+    {"C", 0x21},
+    {"X", 0x22},
+    {"D", 0x23},
+    {"E", 0x24},
+    {"$", 0x25},
+    {"#", 0x26},
+    {"V", 0x2A},
+    {"F", 0x2B},
+    {"T", 0x2C},
+    {"R", 0x2D},
+    {"%", 0x2E},
+    {"N", 0x31},
+    {"B", 0x32},
+    {"H", 0x33},
+    {"G", 0x34},
+    {"Y", 0x35},
+    {"^", 0x36},
+    {"M", 0x3A},
+    {"J", 0x3B},
+    {"U", 0x3C},
+    {"&", 0x3D},
+    {"*", 0x3E},
+    {"<", 0x41},
+    {"K", 0x42},
+    {"I", 0x43},
+    {"O", 0x44},
+    {")", 0x45},
+    {"(", 0x46},
+    {">", 0x49},
+    {"?", 0x4A},
+    {"L", 0x4B},
+    {":", 0x4C},
+    {"P", 0x4D},
+    {"_", 0x4E},
+    {"\"", 0x52},
+    {"{", 0x54},
+    {"+", 0x55},
+    {"}", 0x5B},
+    {"|", 0x5D},
+  };
+
 struct key extended_keys[] =
   {
     {"[END]", 0x69},
@@ -134,8 +180,8 @@ struct key extended_keys[] =
     {"[PGUP]", 0x7D}
   };
 
-struct key_page default_key_page = { keys, 67 };
-struct key_page extended_key_page = { extended_keys, 10 };
+struct key_page default_key_page = { keys, shift_keys, 67, 47 };
+struct key_page extended_key_page = { extended_keys, NULL, 10, 0 };
 
 int compare_keys(const void *k1, const void *k2)
 {
@@ -157,11 +203,27 @@ char *lookup_key(volatile struct scan_code *code, struct key_page *current_keys)
   }
 }
 
+char *lookup_shift_key(volatile struct scan_code *code, struct key_page *current_keys)
+{
+  struct key search_key;
+  struct key *found_key;
+  search_key.value = code->value;
+  found_key = bsearch(&search_key, current_keys->shift_keys, current_keys->shift_size, sizeof(struct key), compare_keys);
+  if (found_key) {
+    return found_key->label;
+  } else {
+    return NULL;
+  }
+}
+
 char *decode(volatile struct scan_code *code)
 {
   static struct keyboard_state state = { 0, 0 };
   static struct key_page *current_keys = &default_key_page;
   char *label = NULL;
+  struct scan_code new_code = *code;
+
+  keyboard_state_transition(&state, &new_code);
 
   if (is_extended_code(code)) {
     // swap in a new "page" of scan codes
@@ -173,6 +235,11 @@ char *decode(volatile struct scan_code *code)
     state.release_mode = 0;
   } else if (is_release_code(code)) {
     state.release_mode = 1;
+  } else if (keyboard_shift_pressed(&state)) {
+    label = lookup_shift_key(code, current_keys);
+    if (!label) {
+      label = lookup_key(code, current_keys);
+    }
   } else {
     label = lookup_key(code, current_keys);
   }

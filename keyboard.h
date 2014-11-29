@@ -38,7 +38,7 @@ enum scan_state_id
 struct scan_state
 {
   enum scan_state_id id;
-  uint8_t nbits; // number of bits received from the device
+  uint8_t nbits; // number of bits received from the keyboard
 };
 
 struct scan_code

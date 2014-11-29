@@ -192,9 +192,6 @@ int main(void)
 
   stdout = &usart_output;
 
-  // enable interrupts
-  sei();
-
   printf("Hello [%d]\r\n", sizeof(keys));
 
   while (1) {

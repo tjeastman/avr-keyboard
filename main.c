@@ -150,36 +150,34 @@ struct key *lookup_key(struct scan_code *code, struct key_page *current_keys)
   return bsearch(&search_key, current_keys->keys, current_keys->size, sizeof(struct key), compare_keys);
 }
 
-char *decode(struct scan_code *code)
+char *keyboard_state_label(struct keyboard_state state, struct key *key)
 {
-  static struct keyboard_state state = { 0, 0, 0, 0 };
-  static struct key_page *current_keys = &default_key_page;
-  struct key *found_key;
-  char *label = NULL;
-
-  keyboard_state_transition(&state, code);
-
-  if (state.final) {
-    // determine what set of keys to use
-    if (state.extended_mode) {
-      current_keys = &extended_key_page;
-    } else {
-      current_keys = &default_key_page;
-    }
+  if (state.final && key) {
     if (!state.release_mode) {
-      // search for a key with the current scan code
-      found_key = lookup_key(code, current_keys);
-      if (found_key) {
-        if (keyboard_shift_pressed(&state) && found_key->label_shift) {
-          label = found_key->label_shift;
-        } else {
-          label = found_key->label;
-        }
+      if (keyboard_shift_pressed(&state) && key->label_shift) {
+        return key->label_shift;
+      } else {
+        return key->label;
       }
     }
   }
+  return NULL;
+}
 
-  return label;
+struct key *decode(struct keyboard_state *state, struct scan_code *code)
+{
+  keyboard_state_transition(state, code);
+
+  if (state->final) {
+    // determine what set of keys to use
+    if (state->extended_mode) {
+      return lookup_key(code, &extended_key_page);
+    } else {
+      return lookup_key(code, &default_key_page);
+    }
+  }
+
+  return NULL;
 }
 
 USB_PUBLIC uchar usbFunctionSetup(uchar data[8])
@@ -189,7 +187,9 @@ USB_PUBLIC uchar usbFunctionSetup(uchar data[8])
 
 int main(void)
 {
+  struct keyboard_state state = { 0, 0, 0, 0 };
   struct scan_code *code;
+  struct key *key;
   char *label;
 
   wdt_enable(WDTO_1S); // enable 1s watchdog timer
@@ -214,8 +214,10 @@ int main(void)
     wdt_reset(); // reset the watchdog timer
     usbPoll();
     if (code = scan_buffer_remove()) {
-      if (label = decode(code)) {
-        printf("%s", label);
+      if (key = decode(&state, code)) {
+        if (label = keyboard_state_label(state, key)) {
+          printf("%s", label);
+        }
       }
     }
     _delay_ms(10);

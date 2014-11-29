@@ -44,6 +44,11 @@ struct key_page {
   unsigned int size;
 };
 
+struct keyboard_report {
+  uint8_t modifiers;
+  uint8_t codes[1];
+};
+
 struct key keys[] =
   {
     {0x01, 0x42, "[F9]", NULL},
@@ -190,7 +195,11 @@ int main(void)
   struct keyboard_state state = { 0, 0, 0, 0 };
   struct scan_code *code;
   struct key *key;
+  struct keyboard_report report;
   char *label;
+
+  report.modifiers = 0;
+  report.codes[0] = 0;
 
   wdt_enable(WDTO_1S); // enable 1s watchdog timer
 
@@ -218,6 +227,17 @@ int main(void)
         if (label = keyboard_state_label(state, key)) {
           printf("%s", label);
         }
+        if (state.release_mode) {
+          report.modifiers = state.modifiers;
+          report.codes[0] = 0;
+        } else if (key->value_usb == 0) {
+          report.modifiers = state.modifiers;
+          report.codes[0] = 0;
+        } else {
+          report.modifiers = state.modifiers;
+          report.codes[0] = key->value_usb;
+        }
+        usbSetInterrupt((void *)&report, sizeof(report));
       }
     }
     _delay_ms(10);

@@ -5,7 +5,7 @@ F_CPU = 16000000L
 BAUD = 9600
 CFLAGS = -DF_CPU=$(F_CPU) -DBAUD=$(BAUD) -mmcu=$(DEVICE) -Os -std=c99 -c
 
-OBJECTS = usbdrv/usbdrvasm.o usbdrv/usbdrv.o main.o usart.o keyboard.o
+OBJECTS = usbdrv/usbdrvasm.o usbdrv/usbdrv.o main.o usart.o keyboard.o protocol.o state.o
 
 main.hex: main.elf
 	$(OBJCOPY) -j .text -j .data -O ihex $< $@
@@ -31,6 +31,6 @@ flash: main.hex
 	avrdude -p $(DEVICE) -c usbtiny -P usb -qq -U flash:w:main.hex
 
 clean:
-	$(RM) main.hex main.elf main.o usart.o keyboard.o usbdrv/usbdrvasm.o usbdrv/usbdrv.o
+	$(RM) main.hex main.elf $(OBJECTS)
 
 .PHONY: all flash clean

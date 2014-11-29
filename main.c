@@ -6,6 +6,8 @@
 #include "usbdrv.h"
 #include "usart.h"
 #include "keyboard.h"
+#include "protocol.h"
+#include "state.h"
 
 setup_keyboard_interrupt();
 

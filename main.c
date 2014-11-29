@@ -138,8 +138,8 @@ struct key extended_keys[] =
     {0x7D, 0x00, "[PGUP]", NULL}
   };
 
-struct key_page default_key_page = { keys, 67 };
-struct key_page extended_key_page = { extended_keys, 10 };
+struct key_page default_key_page = { keys, sizeof(keys) / sizeof(struct key) };
+struct key_page extended_key_page = { extended_keys, sizeof(extended_keys) / sizeof(struct key) };
 
 int compare_keys(const void *k1, const void *k2)
 {
@@ -217,7 +217,7 @@ int main(void)
 
   stdout = &usart_output;
 
-  printf("Hello [%d]\r\n", sizeof(keys));
+  printf("Hello\r\n");
 
   while (1) {
     wdt_reset(); // reset the watchdog timer

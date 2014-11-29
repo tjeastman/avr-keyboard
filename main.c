@@ -190,7 +190,7 @@ int compare_keys(const void *k1, const void *k2)
   return key1->value - key2->value;
 }
 
-char *lookup_key(volatile struct scan_code *code, struct key_page *current_keys)
+char *lookup_key(struct scan_code *code, struct key_page *current_keys)
 {
   struct key search_key;
   struct key *found_key;
@@ -203,7 +203,7 @@ char *lookup_key(volatile struct scan_code *code, struct key_page *current_keys)
   }
 }
 
-char *lookup_shift_key(volatile struct scan_code *code, struct key_page *current_keys)
+char *lookup_shift_key(struct scan_code *code, struct key_page *current_keys)
 {
   struct key search_key;
   struct key *found_key;
@@ -216,7 +216,7 @@ char *lookup_shift_key(volatile struct scan_code *code, struct key_page *current
   }
 }
 
-char *decode(volatile struct scan_code *code)
+char *decode(struct scan_code *code)
 {
   static struct keyboard_state state = { 0, 0 };
   static struct key_page *current_keys = &default_key_page;
@@ -252,7 +252,7 @@ char *decode(volatile struct scan_code *code)
 
 int main(void)
 {
-  volatile struct scan_code *code;
+  struct scan_code *code;
   char *label;
   usart_init();
   keyboard_init();

@@ -10,14 +10,17 @@ volatile unsigned int scan_buffer_tail = 0;
 volatile struct scan_state state = { SCAN_START, 0 };
 volatile struct scan_code code;
 
-volatile struct scan_code *scan_buffer_remove(void)
+// avoid volatile qualifier for external consumers of scan codes
+struct scan_code code_external;
+
+struct scan_code *scan_buffer_remove(void)
 {
-  volatile struct scan_code *code = NULL;
   if (scan_buffer_head != scan_buffer_tail) {
-    code = &scan_buffer[scan_buffer_head];
+    code_external = scan_buffer[scan_buffer_head];
     scan_buffer_head = scan_buffer_increment(scan_buffer_head);
+    return &code_external;
   }
-  return code;
+  return NULL;
 }
 
 inline void scan_buffer_insert(volatile struct scan_code code)
@@ -75,12 +78,12 @@ void keyboard_init(void)
   sei();
 }
 
-int is_release_code(volatile struct scan_code *code)
+int is_release_code(struct scan_code *code)
 {
   return code->value == RELEASE_KEY_VALUE;
 }
 
-int is_extended_code(volatile struct scan_code *code)
+int is_extended_code(struct scan_code *code)
 {
   return code->value == EXTENDED_KEY_VALUE;
 }

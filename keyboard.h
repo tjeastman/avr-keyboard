@@ -50,10 +50,10 @@ struct scan_code
 void keyboard_init(void);
 void keyboard_interrupt(void);
 
-volatile struct scan_code *scan_buffer_remove(void);
+struct scan_code *scan_buffer_remove(void);
 
-int is_release_code(volatile struct scan_code *code);
-int is_extended_code(volatile struct scan_code *code);
+int is_release_code(struct scan_code *code);
+int is_extended_code(struct scan_code *code);
 
 enum keyboard_modifier_id
 {

@@ -148,10 +148,10 @@ int compare_keys(const void *k1, const void *k2)
   return key1->value - key2->value;
 }
 
-struct key *lookup_key(struct scan_code *code, struct key_page *current_keys)
+struct key *lookup_key(struct frame *frame, struct key_page *current_keys)
 {
   struct key search_key;
-  search_key.value = code->value;
+  search_key.value = frame->data;
   return bsearch(&search_key, current_keys->keys, current_keys->size, sizeof(struct key), compare_keys);
 }
 
@@ -169,16 +169,16 @@ char *keyboard_state_label(struct keyboard_state state, struct key *key)
   return NULL;
 }
 
-struct key *decode(struct keyboard_state *state, struct scan_code *code)
+struct key *decode(struct keyboard_state *state, struct frame *frame)
 {
-  keyboard_state_transition(state, code);
+  keyboard_state_transition(state, frame);
 
   if (state->final) {
     // determine what set of keys to use
     if (state->extended_mode) {
-      return lookup_key(code, &extended_key_page);
+      return lookup_key(frame, &extended_key_page);
     } else {
-      return lookup_key(code, &default_key_page);
+      return lookup_key(frame, &default_key_page);
     }
   }
 
@@ -193,7 +193,7 @@ USB_PUBLIC uchar usbFunctionSetup(uchar data[8])
 int main(void)
 {
   struct keyboard_state state = { 0, 0, 0, 0 };
-  struct scan_code *code;
+  struct frame *code;
   struct key *key;
   struct keyboard_report report;
   char *label;
@@ -222,7 +222,7 @@ int main(void)
   while (1) {
     wdt_reset(); // reset the watchdog timer
     usbPoll();
-    if (code = scan_buffer_remove()) {
+    if (code = frame_buffer_remove()) {
       if (key = decode(&state, code)) {
         if (label = keyboard_state_label(state, key)) {
           printf("%s", label);

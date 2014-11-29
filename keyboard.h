@@ -1,7 +1,7 @@
 #ifndef KEYBOARD_H
 #define KEYBOARD_H
 
-#define SCAN_BUFFER_SIZE 10
+#define FRAME_BUFFER_SIZE 10
 
 #define RELEASE_KEY_VALUE 0xF0;
 #define EXTENDED_KEY_VALUE 0xE0;
@@ -25,39 +25,41 @@
 
 #define read_keyboard_data() (KEYBOARD_PIN & (1 << KEYBOARD_DATA_PIN_NUM) ? 1 : 0)
 #define setup_keyboard_interrupt() ISR(KEYBOARD_INTERRUPT_VECTOR) { keyboard_interrupt(); }
-#define scan_buffer_increment(name) ((name) + 1) % SCAN_BUFFER_SIZE
+#define frame_buffer_increment(name) ((name) + 1) % FRAME_BUFFER_SIZE
 
-enum scan_state_id
+enum frame_state_id
 {
-  SCAN_START,
-  SCAN_DATA,
-  SCAN_PARITY,
-  SCAN_END
+  FRAME_START,
+  FRAME_DATA,
+  FRAME_PARITY,
+  FRAME_END
 };
 
-struct scan_state
+struct frame_state
 {
-  enum scan_state_id id;
-  uint8_t nbits; // number of bits received from the keyboard
+  enum frame_state_id id;
+  uint8_t nbits; // number of data bits received
 };
 
-struct scan_code
+struct frame
 {
-  uint8_t value;
+  uint8_t start;
+  uint8_t data;
   uint8_t parity;
+  uint8_t end;
 };
 
 void keyboard_init(void);
 void keyboard_interrupt(void);
 
-struct scan_code *scan_buffer_remove(void);
+struct frame *frame_buffer_remove(void);
 
-int is_code_release(struct scan_code *);
-int is_code_extended(struct scan_code *);
-int is_code_left_shift(struct scan_code *);
-int is_code_right_shift(struct scan_code *);
-int is_code_left_ctrl(struct scan_code *);
-int is_code_right_ctrl(struct scan_code *);
+int is_frame_release(struct frame *);
+int is_frame_extended(struct frame *);
+int is_frame_left_shift(struct frame *);
+int is_frame_right_shift(struct frame *);
+int is_frame_left_ctrl(struct frame *);
+int is_frame_right_ctrl(struct frame *);
 
 enum keyboard_modifier_id
 {
@@ -81,6 +83,6 @@ struct keyboard_state
 
 int keyboard_shift_pressed(struct keyboard_state *);
 int keyboard_ctrl_pressed(struct keyboard_state *);
-void keyboard_state_transition(struct keyboard_state *, struct scan_code *);
+void keyboard_state_transition(struct keyboard_state *, struct frame *);
 
 #endif

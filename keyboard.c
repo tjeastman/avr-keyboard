@@ -3,65 +3,65 @@
 #include <stdlib.h>
 #include "keyboard.h"
 
-volatile struct scan_code scan_buffer[SCAN_BUFFER_SIZE];
-volatile unsigned int scan_buffer_head = 0;
-volatile unsigned int scan_buffer_tail = 0;
+volatile struct frame frame_buffer[FRAME_BUFFER_SIZE];
+volatile unsigned int frame_buffer_head = 0;
+volatile unsigned int frame_buffer_tail = 0;
 
-volatile struct scan_state state = { SCAN_START, 0 };
-volatile struct scan_code code;
+volatile struct frame_state state = { FRAME_START, 0 };
+volatile struct frame frame;
 
 // avoid volatile qualifier for external consumers of scan codes
-struct scan_code code_external;
+struct frame frame_external;
 
-struct scan_code *scan_buffer_remove(void)
+struct frame *frame_buffer_remove(void)
 {
-  if (scan_buffer_head != scan_buffer_tail) {
-    code_external = scan_buffer[scan_buffer_head];
-    scan_buffer_head = scan_buffer_increment(scan_buffer_head);
-    return &code_external;
+  if (frame_buffer_head != frame_buffer_tail) {
+    frame_external = frame_buffer[frame_buffer_head];
+    frame_buffer_head = frame_buffer_increment(frame_buffer_head);
+    return &frame_external;
   }
   return NULL;
 }
 
-inline void scan_buffer_insert(volatile struct scan_code code)
+inline void frame_buffer_insert(volatile struct frame frame)
 {
-  scan_buffer[scan_buffer_tail] = code;
-  scan_buffer_tail = scan_buffer_increment(scan_buffer_tail);
+  frame_buffer[frame_buffer_tail] = frame;
+  frame_buffer_tail = frame_buffer_increment(frame_buffer_tail);
 }
 
-inline void scan_state_transition(volatile struct scan_state *state)
+inline void frame_state_transition(volatile struct frame_state *state)
 {
-  if (state->id == SCAN_DATA)
+  if (state->id == FRAME_DATA)
     state->nbits += 1;
 
-  if (state->id == SCAN_START) {
-    state->id = SCAN_DATA;
+  if (state->id == FRAME_START) {
+    state->id = FRAME_DATA;
     state->nbits = 0;
-  } else if (state->id == SCAN_DATA && state->nbits < 8) {
-    state->id = SCAN_DATA;
-  } else if (state->id == SCAN_DATA && state->nbits == 8) {
-    state->id = SCAN_PARITY;
-  } else if (state->id == SCAN_PARITY) {
-    state->id = SCAN_END;
-  } else if (state->id == SCAN_END) {
-    state->id = SCAN_START;
+  } else if (state->id == FRAME_DATA && state->nbits < 8) {
+    state->id = FRAME_DATA;
+  } else if (state->id == FRAME_DATA && state->nbits == 8) {
+    state->id = FRAME_PARITY;
+  } else if (state->id == FRAME_PARITY) {
+    state->id = FRAME_END;
+  } else if (state->id == FRAME_END) {
+    state->id = FRAME_START;
   }
 }
 
 void keyboard_interrupt(void)
 {
-  if (state.id == SCAN_START) {
-    code.value = 0;
-    code.parity = 0;
-  } else if (state.id == SCAN_DATA) {
-    code.value = code.value >> 1;
-    code.value |= (read_keyboard_data() << 7);
-  } else if (state.id ==  SCAN_PARITY) {
-    code.parity = read_keyboard_data();
-  } else if (state.id == SCAN_END) {
-    scan_buffer_insert(code);
+  if (state.id == FRAME_START) {
+    frame.data = 0;
+    frame.parity = 0;
+  } else if (state.id == FRAME_DATA) {
+    frame.data = frame.data >> 1;
+    frame.data |= (read_keyboard_data() << 7);
+  } else if (state.id ==  FRAME_PARITY) {
+    frame.parity = read_keyboard_data();
+  } else if (state.id == FRAME_END) {
+    frame_buffer_insert(frame);
   }
-  scan_state_transition(&state);
+  frame_state_transition(&state);
 }
 
 void keyboard_init(void)
@@ -78,34 +78,34 @@ void keyboard_init(void)
   sei();
 }
 
-int is_code_release(struct scan_code *code)
+int is_frame_release(struct frame *frame)
 {
-  return code->value == RELEASE_KEY_VALUE;
+  return frame->data == RELEASE_KEY_VALUE;
 }
 
-int is_code_extended(struct scan_code *code)
+int is_frame_extended(struct frame *frame)
 {
-  return code->value == EXTENDED_KEY_VALUE;
+  return frame->data == EXTENDED_KEY_VALUE;
 }
 
-int is_code_left_shift(struct scan_code *code)
+int is_frame_left_shift(struct frame *frame)
 {
-  return code->value == 0x12;
+  return frame->data == 0x12;
 }
 
-int is_code_right_shift(struct scan_code *code)
+int is_frame_right_shift(struct frame *frame)
 {
-  return code->value == 0x59;
+  return frame->data == 0x59;
 }
 
-int is_code_left_ctrl(struct scan_code *code)
+int is_frame_left_ctrl(struct frame *frame)
 {
-  return code->value == 0;
+  return frame->data == 0;
 }
 
-int is_code_right_ctrl(struct scan_code *code)
+int is_frame_right_ctrl(struct frame *frame)
 {
-  return code->value == 0;
+  return frame->data == 0;
 }
 
 int keyboard_shift_pressed(struct keyboard_state *state)
@@ -118,7 +118,7 @@ int keyboard_ctrl_pressed(struct keyboard_state *state)
   return state->modifiers & (0x01 << MOD_LEFT_CTRL | 0x01 << MOD_RIGHT_CTRL);
 }
 
-void keyboard_state_transition(struct keyboard_state *state, struct scan_code *code)
+void keyboard_state_transition(struct keyboard_state *state, struct frame *code)
 {
   // reset the state if the previous state represented a complete key event
   // note that modifier key states can extend over multiple key events
@@ -129,23 +129,23 @@ void keyboard_state_transition(struct keyboard_state *state, struct scan_code *c
   }
 
   // handle special scan codes
-  if (is_code_extended(code)) {
+  if (is_frame_extended(code)) {
     state->extended_mode = 1;
     return;
-  } else if (is_code_release(code)) {
+  } else if (is_frame_release(code)) {
     state->release_mode = 1;
     return;
   }
 
   // determine if a modifier key was involved in the key event that produced the given scan code
   uint8_t modifier = 0;
-  if (is_code_left_shift(code)) {
+  if (is_frame_left_shift(code)) {
     modifier = (1 << MOD_LEFT_SHIFT);
-  } else if (is_code_right_shift(code)) {
+  } else if (is_frame_right_shift(code)) {
     modifier = (1 << MOD_RIGHT_SHIFT);
-  } else if (is_code_left_ctrl(code)) {
+  } else if (is_frame_left_ctrl(code)) {
     modifier = (1 << MOD_LEFT_CTRL);
-  } else if (is_code_right_ctrl(code)) {
+  } else if (is_frame_right_ctrl(code)) {
     modifier = (1 << MOD_RIGHT_CTRL);
   }
 

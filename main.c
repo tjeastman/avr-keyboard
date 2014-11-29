@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
+#include <avr/wdt.h>
+#include "usbdrv.h"
 #include "usart.h"
 #include "keyboard.h"
 
@@ -166,10 +168,27 @@ char *decode(struct scan_code *code)
   return label;
 }
 
+USB_PUBLIC uchar usbFunctionSetup(uchar data[8])
+{
+  return 0;
+}
+
 int main(void)
 {
   struct scan_code *code;
   char *label;
+
+  wdt_enable(WDTO_1S); // enable 1s watchdog timer
+
+  usbInit();
+
+  usbDeviceDisconnect(); // enforce re-enumeration
+  for (int i = 0; i < 250; ++i) {
+    wdt_reset(); // reset the watchdog timer
+    _delay_ms(2);
+  }
+  usbDeviceConnect();
+
   usart_init();
   keyboard_init();
 
@@ -178,6 +197,8 @@ int main(void)
   printf("Hello [%d]\r\n", sizeof(keys));
 
   while (1) {
+    wdt_reset(); // reset the watchdog timer
+    usbPoll();
     if (code = scan_buffer_remove()) {
       if (label = decode(code)) {
         printf("%s", label);

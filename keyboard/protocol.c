@@ -1,7 +1,8 @@
 #include <stdlib.h>
 #include <avr/io.h>
-#include "base.h"
-#include "protocol.h"
+
+#include "keyboard/base.h"
+#include "keyboard/protocol.h"
 
 volatile struct frame frame_buffer[FRAME_BUFFER_SIZE];
 volatile unsigned int frame_buffer_head = 0;

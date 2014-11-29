@@ -3,7 +3,7 @@ OBJCOPY = avr-objcopy
 DEVICE = atmega328p
 F_CPU = 16000000L
 BAUD = 9600
-CFLAGS = -DF_CPU=$(F_CPU) -DBAUD=$(BAUD) -mmcu=$(DEVICE) -Os -std=c99 -c
+CFLAGS = -DF_CPU=$(F_CPU) -DBAUD=$(BAUD) -mmcu=$(DEVICE) -Os -std=c99 -I. -c
 
 OBJECTS = usbdrv/usbdrvasm.o usbdrv/usbdrv.o main.o usart.o keyboard/base.o keyboard/protocol.o keyboard/state.o
 

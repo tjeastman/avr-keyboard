@@ -1,7 +1,8 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <stdlib.h>
-#include "base.h"
+
+#include "keyboard/base.h"
 
 void keyboard_init(void)
 {

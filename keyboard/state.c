@@ -1,7 +1,8 @@
 #include <stdlib.h>
 #include <avr/io.h>
-#include "protocol.h"
-#include "state.h"
+
+#include "keyboard/protocol.h"
+#include "keyboard/state.h"
 
 int keyboard_shift_pressed(struct keyboard_state *state)
 {

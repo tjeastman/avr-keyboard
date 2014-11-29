@@ -149,7 +149,7 @@ char *decode(struct scan_code *code)
 
   keyboard_state_transition(&state, code);
 
-  if (is_extended_code(code)) {
+  if (is_code_extended(code)) {
     // swap in a new "page" of scan codes
     current_keys = &extended_key_page;
     return NULL;
@@ -157,7 +157,7 @@ char *decode(struct scan_code *code)
 
   if (state.release_mode) {
     state.release_mode = 0;
-  } else if (is_release_code(code)) {
+  } else if (is_code_release(code)) {
     state.release_mode = 1;
   } else if (keyboard_shift_pressed(&state)) {
     found_key = lookup_key(code, current_keys);

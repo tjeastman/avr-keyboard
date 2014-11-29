@@ -78,12 +78,12 @@ void keyboard_init(void)
   sei();
 }
 
-int is_release_code(struct scan_code *code)
+int is_code_release(struct scan_code *code)
 {
   return code->value == RELEASE_KEY_VALUE;
 }
 
-int is_extended_code(struct scan_code *code)
+int is_code_extended(struct scan_code *code)
 {
   return code->value == EXTENDED_KEY_VALUE;
 }

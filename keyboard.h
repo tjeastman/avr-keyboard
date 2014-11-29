@@ -52,8 +52,12 @@ void keyboard_interrupt(void);
 
 struct scan_code *scan_buffer_remove(void);
 
-int is_release_code(struct scan_code *code);
-int is_extended_code(struct scan_code *code);
+int is_code_release(struct scan_code *);
+int is_code_extended(struct scan_code *);
+int is_code_left_shift(struct scan_code *);
+int is_code_right_shift(struct scan_code *);
+int is_code_left_ctrl(struct scan_code *);
+int is_code_right_ctrl(struct scan_code *);
 
 enum keyboard_modifier_id
 {
@@ -72,11 +76,6 @@ struct keyboard_state
   uint8_t modifiers;
   uint8_t release_mode;
 };
-
-int is_code_left_shift(struct scan_code *);
-int is_code_right_shift(struct scan_code *);
-int is_code_left_ctrl(struct scan_code *);
-int is_code_right_ctrl(struct scan_code *);
 
 int keyboard_shift_pressed(struct keyboard_state *);
 int keyboard_ctrl_pressed(struct keyboard_state *);

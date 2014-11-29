@@ -143,12 +143,7 @@ struct key *lookup_key(struct scan_code *code, struct key_page *current_keys)
   struct key search_key;
   struct key *found_key;
   search_key.value = code->value;
-  found_key = bsearch(&search_key, current_keys->keys, current_keys->size, sizeof(struct key), compare_keys);
-  if (found_key) {
-    return found_key;
-  } else {
-    return NULL;
-  }
+  return bsearch(&search_key, current_keys->keys, current_keys->size, sizeof(struct key), compare_keys);
 }
 
 char *decode(struct scan_code *code)

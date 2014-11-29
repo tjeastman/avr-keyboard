@@ -11,17 +11,22 @@ volatile unsigned int frame_buffer_tail = 0;
 volatile struct frame_state state = { FRAME_START, 0 };
 volatile struct frame frame;
 
-// avoid volatile qualifier for external consumers of frames
-struct frame frame_external;
-
-struct frame *frame_buffer_remove(void)
+int frame_buffer_valid(void)
 {
+  return frame_buffer_head != frame_buffer_tail;
+}
+
+uint8_t frame_buffer_remove(void)
+{
+  struct frame f;
   if (frame_buffer_head != frame_buffer_tail) {
-    frame_external = frame_buffer[frame_buffer_head];
+    f = frame_buffer[frame_buffer_head];
     frame_buffer_head = frame_buffer_increment(frame_buffer_head);
-    return &frame_external;
+    return f.data;
+  } else {
+    // invalid to call when the frame buffer does not contain a valid frame
+    return 0;
   }
-  return NULL;
 }
 
 inline void frame_buffer_insert(volatile struct frame frame)

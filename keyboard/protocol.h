@@ -27,7 +27,8 @@ struct frame
   uint8_t end;
 };
 
-struct frame *frame_buffer_remove(void);
+int frame_buffer_valid(void);
+uint8_t frame_buffer_remove(void);
 
 void keyboard_interrupt(void);
 

@@ -141,7 +141,6 @@ int compare_keys(const void *k1, const void *k2)
 struct key *lookup_key(struct scan_code *code, struct key_page *current_keys)
 {
   struct key search_key;
-  struct key *found_key;
   search_key.value = code->value;
   return bsearch(&search_key, current_keys->keys, current_keys->size, sizeof(struct key), compare_keys);
 }

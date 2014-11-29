@@ -9,26 +9,21 @@ setup_keyboard_interrupt();
 
 void keyboard_state_transition(struct keyboard_state *state, struct scan_code *code)
 {
+  uint8_t modifier = 0;
+  if (is_code_left_shift(code)) {
+    modifier = (1 << MOD_LEFT_SHIFT);
+  } else if (is_code_right_shift(code)) {
+    modifier = (1 << MOD_RIGHT_SHIFT);
+  } else if (is_code_left_ctrl(code)) {
+    modifier = (1 << MOD_LEFT_CTRL);
+  } else if (is_code_right_ctrl(code)) {
+    modifier = (1 << MOD_RIGHT_CTRL);
+  }
+
   if (state->release_mode) {
-    if (is_code_left_shift(code)) {
-      state->modifiers &= ~(1 << MOD_LEFT_SHIFT);
-    } else if (is_code_right_shift(code)) {
-      state->modifiers &= ~(1 << MOD_RIGHT_SHIFT);
-    } else if (is_code_left_ctrl(code)) {
-      state->modifiers &= ~(1 << MOD_LEFT_CTRL);
-    } else if (is_code_right_ctrl(code)) {
-      state->modifiers &= ~(1 << MOD_RIGHT_CTRL);
-    }
+    state->modifiers &= ~modifier;
   } else {
-    if (is_code_left_shift(code)) {
-      state->modifiers |= (1 << MOD_LEFT_SHIFT);
-    } else if (is_code_right_shift(code)) {
-      state->modifiers |= (1 << MOD_RIGHT_SHIFT);
-    } else if (is_code_left_ctrl(code)) {
-      state->modifiers |= (1 << MOD_LEFT_CTRL);
-    } else if (is_code_right_ctrl(code)) {
-      state->modifiers |= (1 << MOD_RIGHT_CTRL);
-    }
+    state->modifiers |= modifier;
   }
 }
 
@@ -137,6 +132,11 @@ int compare_keys(const void *k1, const void *k2)
   struct key *key2 = (struct key *)k2;
   return key1->value - key2->value;
 }
+
+/* int compare_keys(const struct key *key1, const struct key *key2) */
+/* { */
+/*   return key1->value - key2->value; */
+/* } */
 
 struct key *lookup_key(struct scan_code *code, struct key_page *current_keys)
 {

@@ -11,7 +11,7 @@ volatile unsigned int frame_buffer_tail = 0;
 volatile struct frame_state state = { FRAME_START, 0 };
 volatile struct frame frame;
 
-// avoid volatile qualifier for external consumers of scan codes
+// avoid volatile qualifier for external consumers of frames
 struct frame frame_external;
 
 struct frame *frame_buffer_remove(void)

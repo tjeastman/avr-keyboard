@@ -1,3 +1,6 @@
+#ifndef AVR_KEYBOARD_STATE_H_
+#define AVR_KEYBOARD_STATE_H_
+
 enum keyboard_modifier_id
 {
   MOD_LEFT_CTRL = 0,
@@ -21,3 +24,5 @@ struct keyboard_state
 int keyboard_shift_pressed(struct keyboard_state *);
 int keyboard_ctrl_pressed(struct keyboard_state *);
 void keyboard_state_transition(struct keyboard_state *, struct frame *);
+
+#endif

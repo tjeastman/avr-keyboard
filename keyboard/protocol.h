@@ -1,3 +1,6 @@
+#ifndef AVR_KEYBOARD_PROTOCOL_H_
+#define AVR_KEYBOARD_PROTOCOL_H_
+
 #define FRAME_BUFFER_SIZE 10
 
 #define RELEASE_KEY_VALUE 0xF0;
@@ -37,3 +40,5 @@ int is_frame_left_ctrl(struct frame *);
 int is_frame_right_ctrl(struct frame *);
 
 void keyboard_interrupt(void);
+
+#endif

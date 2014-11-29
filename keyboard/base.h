@@ -1,5 +1,5 @@
-#ifndef KEYBOARD_H
-#define KEYBOARD_H
+#ifndef AVR_KEYBOARD_BASE_H_
+#define AVR_KEYBOARD_BASE_H_
 
 #define KEYBOARD_CONCAT(a, b) a ## b
 #define KEYBOARD_CONCAT_EXPAND(a, b) KEYBOARD_CONCAT(a, b)

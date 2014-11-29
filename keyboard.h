@@ -75,6 +75,8 @@ struct keyboard_state
 {
   uint8_t modifiers;
   uint8_t release_mode;
+  uint8_t extended_mode;
+  uint8_t final;
 };
 
 int keyboard_shift_pressed(struct keyboard_state *);

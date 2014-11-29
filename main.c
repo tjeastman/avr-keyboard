@@ -152,41 +152,32 @@ struct key *lookup_key(struct scan_code *code, struct key_page *current_keys)
 
 char *decode(struct scan_code *code)
 {
-  static struct keyboard_state state = { 0, 0 };
+  static struct keyboard_state state = { 0, 0, 0, 0 };
   static struct key_page *current_keys = &default_key_page;
   struct key *found_key;
   char *label = NULL;
 
   keyboard_state_transition(&state, code);
 
-  if (is_code_extended(code)) {
-    // swap in a new "page" of scan codes
-    current_keys = &extended_key_page;
-    return NULL;
-  }
-
-  if (state.release_mode) {
-    state.release_mode = 0;
-  } else if (is_code_release(code)) {
-    state.release_mode = 1;
-  } else if (keyboard_shift_pressed(&state)) {
-    found_key = lookup_key(code, current_keys);
-    if (found_key) {
-      if (found_key->label_shift) {
-        label = found_key->label_shift;
-      } else {
-        label = found_key->label;
+  if (state.final) {
+    // determine what set of keys to use
+    if (state.extended_mode) {
+      current_keys = &extended_key_page;
+    } else {
+      current_keys = &default_key_page;
+    }
+    if (!state.release_mode) {
+      // search for a key with the current scan code
+      found_key = lookup_key(code, current_keys);
+      if (found_key) {
+        if (keyboard_shift_pressed(&state) && found_key->label_shift) {
+          label = found_key->label_shift;
+        } else {
+          label = found_key->label;
+        }
       }
     }
-  } else {
-    found_key = lookup_key(code, current_keys);
-    if (found_key) {
-      label = found_key->label;
-    }
   }
-
-  // switch back to the default "page" of scan codes
-  current_keys = &default_key_page;
 
   return label;
 }

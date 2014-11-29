@@ -120,6 +120,24 @@ int keyboard_ctrl_pressed(struct keyboard_state *state)
 
 void keyboard_state_transition(struct keyboard_state *state, struct scan_code *code)
 {
+  // reset the state if the previous state represented a complete key event
+  // note that modifier key states can extend over multiple key events
+  if (state->final) {
+    state->final = 0;
+    state->release_mode = 0;
+    state->extended_mode = 0;
+  }
+
+  // handle special scan codes
+  if (is_code_extended(code)) {
+    state->extended_mode = 1;
+    return;
+  } else if (is_code_release(code)) {
+    state->release_mode = 1;
+    return;
+  }
+
+  // determine if a modifier key was involved in the key event that produced the given scan code
   uint8_t modifier = 0;
   if (is_code_left_shift(code)) {
     modifier = (1 << MOD_LEFT_SHIFT);
@@ -136,4 +154,6 @@ void keyboard_state_transition(struct keyboard_state *state, struct scan_code *c
   } else {
     state->modifiers |= modifier;
   }
+
+  state->final = 1;
 }

@@ -237,7 +237,7 @@ int main(void)
           report.modifiers = state.modifiers;
           report.codes[0] = key->value_usb;
         }
-        usbSetInterrupt((void *)&report, sizeof(report));
+        //usbSetInterrupt((void *)&report, sizeof(report));
       }
     }
     _delay_ms(10);

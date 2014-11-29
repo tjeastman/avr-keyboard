@@ -133,11 +133,6 @@ int compare_keys(const void *k1, const void *k2)
   return key1->value - key2->value;
 }
 
-/* int compare_keys(const struct key *key1, const struct key *key2) */
-/* { */
-/*   return key1->value - key2->value; */
-/* } */
-
 struct key *lookup_key(struct scan_code *code, struct key_page *current_keys)
 {
   struct key search_key;

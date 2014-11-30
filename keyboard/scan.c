@@ -5,22 +5,42 @@
 
 int is_code_left_shift(struct scan_code *code)
 {
-  return code->value == 0x12;
+  return code->value == 0x12 && !code->extended;
 }
 
 int is_code_right_shift(struct scan_code *code)
 {
-  return code->value == 0x59;
+  return code->value == 0x59 && !code->extended;
 }
 
 int is_code_left_ctrl(struct scan_code *code)
 {
-  return code->value == 0;
+  return code->value == 0x14 && !code->extended;
 }
 
 int is_code_right_ctrl(struct scan_code *code)
 {
-  return code->value == 0;
+  return code->value == 0x14 && code->extended;
+}
+
+int is_code_left_alt(struct scan_code *code)
+{
+  return code->value == 0x11 && !code->extended;
+}
+
+int is_code_right_alt(struct scan_code *code)
+{
+  return code->value == 0x11 && code->extended;
+}
+
+int is_code_left_gui(struct scan_code *code)
+{
+  return code->value == 0x1F && code->extended;
+}
+
+int is_code_right_gui(struct scan_code *code)
+{
+  return code->value == 0x27 && code->extended;
 }
 
 struct scan_code current_scan_code;

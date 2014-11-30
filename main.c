@@ -153,11 +153,11 @@ int compare_keys(const void *k1, const void *k2)
   return key1->value - key2->value;
 }
 
-struct key *lookup_key(uint8_t code, struct key_page *current_keys)
+struct key *lookup_key(struct key_page *page, uint8_t value)
 {
-  struct key search_key;
-  search_key.value = code;
-  return bsearch(&search_key, current_keys->keys, current_keys->size, sizeof(struct key), compare_keys);
+  struct key search;
+  search.value = value;
+  return bsearch(&search, page->keys, page->size, sizeof(struct key), compare_keys);
 }
 
 char *keyboard_state_label(struct keyboard_state state, struct key *key)
@@ -174,9 +174,9 @@ struct key *scan_code_decode(struct scan_code *code)
   if (code->release) {
     return NULL; // do not do anything with release key codes
   } else if (code->extended) {
-    return lookup_key(code->value, &extended_key_page);
+    return lookup_key(&extended_key_page, code->value);
   } else {
-    return lookup_key(code->value, &default_key_page);
+    return lookup_key(&default_key_page, code->value);
   }
 }
 

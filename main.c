@@ -68,9 +68,9 @@ struct key keys[] =
     {0x0C, 0x3D, "[F4]", NULL},
     {0x0D, 0x2B, "\t", NULL},
     {0x0E, 0x35, "`", "~"},
-    // 0x11, 0xE2, Left Alt
-    // 0x12, 0xE1, Left Shift
-    // 0x14, 0xE0,  Left Ctrl
+    {0x11, 0xE2, NULL, NULL}, // left alt
+    {0x12, 0xE1, NULL, NULL}, // left shift
+    {0x14, 0xE0, NULL, NULL}, // left control
     {0x15, 0x14, "q", "Q"},
     {0x16, 0x1E, "1", "!"},
     {0x1A, 0x1D, "z", "Z"},
@@ -117,7 +117,7 @@ struct key keys[] =
     {0x54, 0x2F, "[", "{"},
     {0x55, 0x2E, "=", "+"},
     {0x58, 0x39, "[CAPS]", NULL},
-    // 0x59, 0xE5, Right Shift
+    {0x59, 0xE5, NULL, NULL}, // right shift
     {0x5A, 0x28, "\r\n", NULL},
     {0x5B, 0x30, "]", "}"},
     {0x5D, 0x31, "\\", "|"},
@@ -131,6 +131,8 @@ struct key keys[] =
 
 struct key extended_keys[] =
   {
+    {0x11, 0xE6, NULL, NULL}, // right alt
+    {0x14, 0xE4, NULL, NULL}, // right control
     {0x69, 0x00, "[END]", NULL},
     {0x6B, 0x00, "[LEFT]", NULL},
     {0x6C, 0x00, "[HOME]", NULL},

@@ -19,14 +19,15 @@ enum keyboard_modifier_id
 struct keyboard_state
 {
   uint8_t modifiers;
-  uint8_t release_mode;
-  uint8_t extended_mode;
-  uint8_t final;
+  /* uint8_t release_mode; */
+  /* uint8_t extended_mode; */
+  /* uint8_t final; */
 };
 
 int keyboard_shift_pressed(struct keyboard_state *);
 int keyboard_ctrl_pressed(struct keyboard_state *);
-void keyboard_state_transition(struct keyboard_state *, uint8_t);
+//void keyboard_state_transition(struct keyboard_state *, uint8_t);
+void keyboard_state_transition(struct keyboard_state *, struct scan_code *);
 
 int is_code_release(uint8_t);
 int is_code_extended(uint8_t);

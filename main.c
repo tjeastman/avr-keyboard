@@ -3,10 +3,13 @@
 #include <util/delay.h>
 #include <avr/interrupt.h>
 #include <avr/wdt.h>
+
 #include "usbdrv.h"
 #include "usart.h"
+
 #include "keyboard/base.h"
 #include "keyboard/protocol.h"
+#include "keyboard/scan.h"
 #include "keyboard/state.h"
 
 setup_keyboard_interrupt();
@@ -159,32 +162,22 @@ struct key *lookup_key(uint8_t code, struct key_page *current_keys)
 
 char *keyboard_state_label(struct keyboard_state state, struct key *key)
 {
-  if (state.final && key) {
-    if (!state.release_mode) {
-      if (keyboard_shift_pressed(&state) && key->label_shift) {
-        return key->label_shift;
-      } else {
-        return key->label;
-      }
-    }
+  if (keyboard_shift_pressed(&state) && key->label_shift) {
+    return key->label_shift;
+  } else {
+    return key->label;
   }
-  return NULL;
 }
 
-struct key *decode(struct keyboard_state *state, uint8_t code)
+struct key *scan_code_decode(struct scan_code *code)
 {
-  keyboard_state_transition(state, code);
-
-  if (state->final) {
-    // determine what set of keys to use
-    if (state->extended_mode) {
-      return lookup_key(code, &extended_key_page);
-    } else {
-      return lookup_key(code, &default_key_page);
-    }
+  if (code->release) {
+    return NULL; // do not do anything with release key codes
+  } else if (code->extended) {
+    return lookup_key(code->value, &extended_key_page);
+  } else {
+    return lookup_key(code->value, &default_key_page);
   }
-
-  return NULL;
 }
 
 USB_PUBLIC uchar usbFunctionSetup(uchar data[8])
@@ -194,7 +187,8 @@ USB_PUBLIC uchar usbFunctionSetup(uchar data[8])
 
 int main(void)
 {
-  struct keyboard_state state = { 0, 0, 0, 0 };
+  struct keyboard_state state = { 0 };
+  struct scan_code *current_code;
   uint8_t code;
   struct key *key;
   struct keyboard_report report;
@@ -226,21 +220,28 @@ int main(void)
     usbPoll();
     if (frame_buffer_valid()) {
       code = frame_buffer_remove();
-      if (key = decode(&state, code)) {
-        if (label = keyboard_state_label(state, key)) {
-          printf("%s", label);
+      current_code = scan_state_transition(code);
+
+      if (current_code) {
+
+        keyboard_state_transition(&state, current_code);
+
+        if (key = scan_code_decode(current_code)) {
+          if (label = keyboard_state_label(state, key)) {
+            printf("%s", label);
+          }
+          if (current_code->release) {
+            report.modifiers = state.modifiers;
+            report.codes[0] = 0;
+          } else if (key->value_usb == 0) {
+            report.modifiers = state.modifiers;
+            report.codes[0] = 0;
+          } else {
+            report.modifiers = state.modifiers;
+            report.codes[0] = key->value_usb;
+          }
+          //usbSetInterrupt((void *)&report, sizeof(report));
         }
-        if (state.release_mode) {
-          report.modifiers = state.modifiers;
-          report.codes[0] = 0;
-        } else if (key->value_usb == 0) {
-          report.modifiers = state.modifiers;
-          report.codes[0] = 0;
-        } else {
-          report.modifiers = state.modifiers;
-          report.codes[0] = key->value_usb;
-        }
-        //usbSetInterrupt((void *)&report, sizeof(report));
       }
     }
     _delay_ms(10);

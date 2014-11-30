@@ -81,8 +81,8 @@ int scan_code_read(struct scan_code *code)
   }
 
   while (1) {
-    if (frame_buffer_valid()) {
-      frame_value_t value = frame_buffer_remove();
+    frame_value_t value;
+    if (frame_buffer_remove(&value)) {
       if (scan_state_transition(code, value)) {
         return 1;
       }

@@ -16,15 +16,13 @@ int frame_buffer_valid(void)
   return frame_buffer_head != frame_buffer_tail;
 }
 
-uint8_t frame_buffer_remove(void)
+int frame_buffer_remove(frame_value_t *value)
 {
-  struct frame f;
   if (frame_buffer_head != frame_buffer_tail) {
-    f = frame_buffer[frame_buffer_head];
+    *value = frame_buffer[frame_buffer_head].data;
     frame_buffer_head = frame_buffer_increment(frame_buffer_head);
-    return f.data;
+    return 1;
   } else {
-    // invalid to call when the frame buffer does not contain a valid frame
     return 0;
   }
 }

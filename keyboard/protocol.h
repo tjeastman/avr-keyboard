@@ -30,7 +30,7 @@ struct frame
 typedef uint8_t frame_value_t;
 
 int frame_buffer_valid(void);
-uint8_t frame_buffer_remove(void);
+int frame_buffer_remove(frame_value_t *);
 
 void keyboard_interrupt(void);
 

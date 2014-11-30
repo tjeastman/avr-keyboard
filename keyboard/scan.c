@@ -3,6 +3,26 @@
 
 #include "keyboard/scan.h"
 
+int is_code_left_shift(struct scan_code *code)
+{
+  return code->value == 0x12;
+}
+
+int is_code_right_shift(struct scan_code *code)
+{
+  return code->value == 0x59;
+}
+
+int is_code_left_ctrl(struct scan_code *code)
+{
+  return code->value == 0;
+}
+
+int is_code_right_ctrl(struct scan_code *code)
+{
+  return code->value == 0;
+}
+
 int is_release(uint8_t code)
 {
   return code == RELEASE_KEY_VALUE;

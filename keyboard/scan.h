@@ -16,6 +16,13 @@ struct scan_code {
   uint8_t value;
 };
 
+int is_code_release(struct scan_code *);
+int is_code_extended(struct scan_code *);
+int is_code_left_shift(struct scan_code *);
+int is_code_right_shift(struct scan_code *);
+int is_code_left_ctrl(struct scan_code *);
+int is_code_right_ctrl(struct scan_code *);
+
 struct scan_code *scan_state_transition(uint8_t);
 
 #endif

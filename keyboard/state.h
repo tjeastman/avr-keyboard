@@ -29,11 +29,4 @@ int keyboard_ctrl_pressed(struct keyboard_state *);
 //void keyboard_state_transition(struct keyboard_state *, uint8_t);
 void keyboard_state_transition(struct keyboard_state *, struct scan_code *);
 
-int is_code_release(struct scan_code *);
-int is_code_extended(struct scan_code *);
-int is_code_left_shift(struct scan_code *);
-int is_code_right_shift(struct scan_code *);
-int is_code_left_ctrl(struct scan_code *);
-int is_code_right_ctrl(struct scan_code *);
-
 #endif

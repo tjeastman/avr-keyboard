@@ -1,6 +1,14 @@
 #ifndef AVR_KEYBOARD_STATE_H_
 #define AVR_KEYBOARD_STATE_H_
 
+struct key {
+  uint8_t value;
+  uint8_t extended;
+  uint8_t value_usb;
+  char *label;
+  char *label_shift;
+};
+
 enum keyboard_modifier_id
 {
   MOD_LEFT_CTRL = 0,
@@ -17,6 +25,10 @@ struct keyboard_state
 {
   uint8_t modifiers;
 };
+
+int key_compare(const void *, const void *);
+struct key *key_search(struct scan_code *);
+char *keyboard_state_label(struct keyboard_state, struct key *);
 
 int keyboard_shift_pressed(struct keyboard_state *);
 int keyboard_ctrl_pressed(struct keyboard_state *);

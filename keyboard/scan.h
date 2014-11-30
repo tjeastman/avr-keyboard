@@ -25,6 +25,6 @@ int is_code_right_alt(struct scan_code *code);
 int is_code_left_gui(struct scan_code *code);
 int is_code_right_gui(struct scan_code *code);
 
-struct scan_code *scan_state_transition(uint8_t);
+int scan_state_transition(struct scan_code *, uint8_t);
 
 #endif

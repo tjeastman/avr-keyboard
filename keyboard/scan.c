@@ -43,28 +43,27 @@ int is_code_right_gui(struct scan_code *code)
   return code->value == 0x27 && code->extended;
 }
 
-struct scan_code current_scan_code;
-struct scan_code *scan_state_transition(uint8_t code)
+int scan_state_transition(struct scan_code *code, uint8_t value)
 {
   static struct scan_state state = {0, 0, 0};
 
-  if (code == RELEASE_KEY_VALUE) {
+  if (value == RELEASE_KEY_VALUE) {
     state.release = 1;
-  } else if (code == EXTENDED_KEY_VALUE) {
+  } else if (value == EXTENDED_KEY_VALUE) {
     state.extended = 1;
   } else {
     state.final = 1;
   }
 
   if (state.final) {
-    current_scan_code.extended = state.extended;
-    current_scan_code.release = state.release;
-    current_scan_code.value = code;
+    code->extended = state.extended;
+    code->release = state.release;
+    code->value = value;
     state.extended = 0;
     state.release = 0;
     state.final = 0;
-    return &current_scan_code;
+    return 1;
   } else {
-    return NULL;
+    return 0;
   }
 }

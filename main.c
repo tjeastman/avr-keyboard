@@ -166,15 +166,6 @@ char *keyboard_state_label(struct keyboard_state state, struct key *key)
   }
 }
 
-struct key *scan_code_decode(struct scan_code *code)
-{
-  if (code->release) {
-    return NULL; // do not do anything with release key codes
-  } else {
-    return key_search(code);
-  }
-}
-
 USB_PUBLIC uchar usbFunctionSetup(uchar data[8])
 {
   return 0;
@@ -219,9 +210,11 @@ int main(void)
 
         keyboard_state_transition(&state, &code);
 
-        if (key = scan_code_decode(&code)) {
-          if (label = keyboard_state_label(state, key)) {
-            printf("%s", label);
+        if (key = key_search(&code)) {
+          if (!code.release) {
+            if (label = keyboard_state_label(state, key)) {
+              printf("%s", label);
+            }
           }
           if (code.release) {
             report.modifiers = state.modifiers;

@@ -45,11 +45,6 @@ struct key {
   char *label_shift;
 };
 
-struct key_page {
-  struct key *keys;
-  unsigned int size;
-};
-
 struct keyboard_report {
   uint8_t modifiers;
   uint8_t codes[1];
@@ -142,8 +137,6 @@ struct key keys[] =
     {0x83, 0, 0x40, "[F7]", NULL}
   };
 
-struct key_page default_key_page = { keys, sizeof(keys) / sizeof(struct key) };
-
 int key_compare(const void *k1, const void *k2)
 {
   struct key *key1 = (struct key *)k1;
@@ -155,12 +148,13 @@ int key_compare(const void *k1, const void *k2)
   }
 }
 
-struct key *key_search(struct key_page *page, struct scan_code *code)
+struct key *key_search(struct scan_code *code)
 {
   struct key search;
   search.value = code->value;
   search.extended = code->extended;
-  return bsearch(&search, page->keys, page->size, sizeof(struct key), key_compare);
+  int size = sizeof(keys) / sizeof(struct key);
+  return bsearch(&search, keys, size, sizeof(struct key), key_compare);
 }
 
 char *keyboard_state_label(struct keyboard_state state, struct key *key)
@@ -177,7 +171,7 @@ struct key *scan_code_decode(struct scan_code *code)
   if (code->release) {
     return NULL; // do not do anything with release key codes
   } else {
-    return key_search(&default_key_page, code);
+    return key_search(code);
   }
 }
 

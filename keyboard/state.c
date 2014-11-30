@@ -15,6 +15,16 @@ int keyboard_ctrl_pressed(struct keyboard_state *state)
   return state->modifiers & (0x01 << MOD_LEFT_CTRL | 0x01 << MOD_RIGHT_CTRL);
 }
 
+int keyboard_alt_pressed(struct keyboard_state *state)
+{
+  return state->modifiers & (0x01 << MOD_LEFT_ALT | 0x01 << MOD_RIGHT_ALT);
+}
+
+int keyboard_gui_pressed(struct keyboard_state *state)
+{
+  return state->modifiers & (0x01 << MOD_LEFT_GUI | 0x01 << MOD_RIGHT_GUI);
+}
+
 void keyboard_state_transition(struct keyboard_state *state, struct scan_code *code)
 {
   // determine if the given scan code involves a modifier key

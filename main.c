@@ -188,8 +188,8 @@ USB_PUBLIC uchar usbFunctionSetup(uchar data[8])
 int main(void)
 {
   struct keyboard_state state = { 0 };
-  struct scan_code current_code;
-  uint8_t code;
+  struct scan_code code;
+  uint8_t value;
   struct key *key;
   struct keyboard_report report;
   char *label;
@@ -219,16 +219,16 @@ int main(void)
     wdt_reset(); // reset the watchdog timer
     usbPoll();
     if (frame_buffer_valid()) {
-      code = frame_buffer_remove();
-      if (scan_state_transition(&current_code, code)) {
+      value = frame_buffer_remove();
+      if (scan_state_transition(&code, value)) {
 
-        keyboard_state_transition(&state, &current_code);
+        keyboard_state_transition(&state, &code);
 
-        if (key = scan_code_decode(&current_code)) {
+        if (key = scan_code_decode(&code)) {
           if (label = keyboard_state_label(state, key)) {
             printf("%s", label);
           }
-          if (current_code.release) {
+          if (code.release) {
             report.modifiers = state.modifiers;
             report.codes[0] = 0;
           } else if (key->value_usb == 0) {

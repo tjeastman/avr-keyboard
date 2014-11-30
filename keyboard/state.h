@@ -34,6 +34,6 @@ int keyboard_shift_pressed(struct keyboard_state *);
 int keyboard_ctrl_pressed(struct keyboard_state *);
 int keyboard_alt_pressed(struct keyboard_state *);
 int keyboard_gui_pressed(struct keyboard_state *);
-void keyboard_state_transition(struct keyboard_state *, struct scan_code *);
+void keyboard_state_update(struct keyboard_state *, struct scan_code *);
 
 #endif

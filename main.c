@@ -83,15 +83,14 @@ int main(void)
     if (frame_buffer_valid()) {
       value = frame_buffer_remove();
       if (scan_state_transition(&code, value)) {
-
-        keyboard_state_transition(&state, &code);
-
+        keyboard_state_update(&state, &code);
         if (key = key_search(&code)) {
           if (!code.release) {
             if (label = keyboard_state_label(state, key)) {
               printf("%s", label);
             }
           }
+
           if (code.release) {
             report.modifiers = state.modifiers;
             report.codes[0] = 0;

@@ -139,7 +139,7 @@ int keyboard_gui_pressed(struct keyboard_state *state)
   return state->modifiers & (0x01 << MOD_LEFT_GUI | 0x01 << MOD_RIGHT_GUI);
 }
 
-void keyboard_state_transition(struct keyboard_state *state, struct scan_code *code)
+void keyboard_state_update(struct keyboard_state *state, struct scan_code *code)
 {
   // determine if the given scan code involves a modifier key
   uint8_t modifier = 0;

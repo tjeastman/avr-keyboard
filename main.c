@@ -146,18 +146,18 @@ struct key extended_keys[] =
 struct key_page default_key_page = { keys, sizeof(keys) / sizeof(struct key) };
 struct key_page extended_key_page = { extended_keys, sizeof(extended_keys) / sizeof(struct key) };
 
-int compare_keys(const void *k1, const void *k2)
+int key_compare(const void *k1, const void *k2)
 {
   struct key *key1 = (struct key *)k1;
   struct key *key2 = (struct key *)k2;
   return key1->value - key2->value;
 }
 
-struct key *lookup_key(struct key_page *page, uint8_t value)
+struct key *key_search(struct key_page *page, uint8_t value)
 {
   struct key search;
   search.value = value;
-  return bsearch(&search, page->keys, page->size, sizeof(struct key), compare_keys);
+  return bsearch(&search, page->keys, page->size, sizeof(struct key), key_compare);
 }
 
 char *keyboard_state_label(struct keyboard_state state, struct key *key)
@@ -174,9 +174,9 @@ struct key *scan_code_decode(struct scan_code *code)
   if (code->release) {
     return NULL; // do not do anything with release key codes
   } else if (code->extended) {
-    return lookup_key(&extended_key_page, code->value);
+    return key_search(&extended_key_page, code->value);
   } else {
-    return lookup_key(&default_key_page, code->value);
+    return key_search(&default_key_page, code->value);
   }
 }
 

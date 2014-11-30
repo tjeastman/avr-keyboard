@@ -17,7 +17,7 @@ int keyboard_ctrl_pressed(struct keyboard_state *state)
 
 void keyboard_state_transition(struct keyboard_state *state, struct scan_code *code)
 {
-  // determine if a modifier key was involved in the key event that produced the given frame
+  // determine if the given scan code involves a modifier key
   uint8_t modifier = 0;
   if (is_code_left_shift(code)) {
     modifier = (1 << MOD_LEFT_SHIFT);

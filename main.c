@@ -107,8 +107,6 @@ int main(void)
 
         if (code.release) {
           state.values[0] = 0;
-        } else if (key->value_usb == 0) {
-          state.values[0] = 0;
         } else {
           state.values[0] = key->value_usb;
         }

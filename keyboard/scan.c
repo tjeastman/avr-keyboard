@@ -23,24 +23,14 @@ int is_code_right_ctrl(struct scan_code *code)
   return code->value == 0;
 }
 
-int is_release(uint8_t code)
-{
-  return code == RELEASE_KEY_VALUE;
-}
-
-int is_extended(uint8_t code)
-{
-  return code == EXTENDED_KEY_VALUE;
-}
-
 struct scan_code current_scan_code;
 struct scan_code *scan_state_transition(uint8_t code)
 {
   static struct scan_state state = {0, 0, 0};
 
-  if (is_release(code)) {
+  if (code == RELEASE_KEY_VALUE) {
     state.release = 1;
-  } else if (is_extended(code)) {
+  } else if (code == EXTENDED_KEY_VALUE) {
     state.extended = 1;
   } else {
     state.final = 1;

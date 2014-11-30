@@ -1,8 +1,8 @@
 #ifndef AVR_KEYBOARD_SCAN_H_
 #define AVR_KEYBOARD_SCAN_H_
 
-#define RELEASE_KEY_VALUE 0xF0;
-#define EXTENDED_KEY_VALUE 0xE0;
+#define RELEASE_KEY_VALUE 0xF0
+#define EXTENDED_KEY_VALUE 0xE0
 
 struct scan_state {
   uint8_t extended;
@@ -16,8 +16,6 @@ struct scan_code {
   uint8_t value;
 };
 
-int is_code_release(struct scan_code *);
-int is_code_extended(struct scan_code *);
 int is_code_left_shift(struct scan_code *);
 int is_code_right_shift(struct scan_code *);
 int is_code_left_ctrl(struct scan_code *);

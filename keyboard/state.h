@@ -1,9 +1,6 @@
 #ifndef AVR_KEYBOARD_STATE_H_
 #define AVR_KEYBOARD_STATE_H_
 
-#define RELEASE_KEY_VALUE 0xF0;
-#define EXTENDED_KEY_VALUE 0xE0;
-
 enum keyboard_modifier_id
 {
   MOD_LEFT_CTRL = 0,

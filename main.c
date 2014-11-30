@@ -36,8 +36,32 @@ PROGMEM const char usbHidReportDescriptor[USB_CFG_HID_REPORT_DESCRIPTOR_LENGTH] 
     0xc0                // END_COLLECTION
 };
 
-USB_PUBLIC uchar usbFunctionSetup(uchar data[8])
-{
+static uchar idle_rate; // repeat rate for keyboards
+
+USB_PUBLIC uchar usbFunctionSetup(uchar data[8]) {
+  usbRequest_t *rq = (void *)data;
+
+  struct keyboard_state state;
+
+  if((rq->bmRequestType & USBRQ_TYPE_MASK) == USBRQ_TYPE_CLASS) {
+    switch(rq->bRequest) {
+    case USBRQ_HID_GET_REPORT:
+      // indicate that no keys are pressed here
+      usbMsgPtr = (void *)&state;
+      state.modifiers = 0;
+      state.values[0] = 0;
+      return sizeof(state);
+    case USBRQ_HID_SET_REPORT:
+      return (rq->wLength.word == 1) ? USB_NO_MSG : 0;
+    case USBRQ_HID_GET_IDLE: // send idle rate
+      usbMsgPtr = &idle_rate;
+      return 1;
+    case USBRQ_HID_SET_IDLE: // store idle rate
+      idle_rate = rq->wValue.bytes[1];
+      return 0;
+    }
+  }
+
   return 0;
 }
 

@@ -24,6 +24,7 @@ enum keyboard_modifier_id
 struct keyboard_state
 {
   uint8_t modifiers;
+  uint8_t values[1];
 };
 
 int key_compare(const void *, const void *);

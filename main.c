@@ -37,11 +37,6 @@ PROGMEM const char usbHidReportDescriptor[USB_CFG_HID_REPORT_DESCRIPTOR_LENGTH] 
     0xc0                // END_COLLECTION
 };
 
-struct keyboard_report {
-  uint8_t modifiers;
-  uint8_t codes[1];
-};
-
 USB_PUBLIC uchar usbFunctionSetup(uchar data[8])
 {
   return 0;
@@ -49,15 +44,14 @@ USB_PUBLIC uchar usbFunctionSetup(uchar data[8])
 
 int main(void)
 {
-  struct keyboard_state state = { 0 };
+  struct keyboard_state state;
+  state.modifiers = 0;
+  state.values[0] = 0;
   struct scan_code code;
   uint8_t value;
   struct key *key;
-  struct keyboard_report report;
-  char *label;
 
-  report.modifiers = 0;
-  report.codes[0] = 0;
+  char *label;
 
   wdt_enable(WDTO_1S); // enable 1s watchdog timer
 
@@ -92,16 +86,13 @@ int main(void)
           }
 
           if (code.release) {
-            report.modifiers = state.modifiers;
-            report.codes[0] = 0;
+            state.values[0] = 0;
           } else if (key->value_usb == 0) {
-            report.modifiers = state.modifiers;
-            report.codes[0] = 0;
+            state.values[0] = 0;
           } else {
-            report.modifiers = state.modifiers;
-            report.codes[0] = key->value_usb;
+            state.values[0] = key->value_usb;
           }
-          //usbSetInterrupt((void *)&report, sizeof(report));
+          //usbSetInterrupt((void *)&state, sizeof(state));
         }
       }
     }

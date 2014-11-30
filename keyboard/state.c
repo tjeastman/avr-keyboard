@@ -15,47 +15,47 @@ int keyboard_ctrl_pressed(struct keyboard_state *state)
   return state->modifiers & (0x01 << MOD_LEFT_CTRL | 0x01 << MOD_RIGHT_CTRL);
 }
 
-int is_code_release(uint8_t code)
+int is_code_release(struct scan_code *code)
 {
-  return code == RELEASE_KEY_VALUE;
+  return code->value == RELEASE_KEY_VALUE;
 }
 
-int is_code_extended(uint8_t code)
+int is_code_extended(struct scan_code *code)
 {
-  return code == EXTENDED_KEY_VALUE;
+  return code->value == EXTENDED_KEY_VALUE;
 }
 
-int is_code_left_shift(uint8_t code)
+int is_code_left_shift(struct scan_code *code)
 {
-  return code == 0x12;
+  return code->value == 0x12;
 }
 
-int is_code_right_shift(uint8_t code)
+int is_code_right_shift(struct scan_code *code)
 {
-  return code == 0x59;
+  return code->value == 0x59;
 }
 
-int is_code_left_ctrl(uint8_t code)
+int is_code_left_ctrl(struct scan_code *code)
 {
-  return code == 0;
+  return code->value == 0;
 }
 
-int is_code_right_ctrl(uint8_t code)
+int is_code_right_ctrl(struct scan_code *code)
 {
-  return code == 0;
+  return code->value == 0;
 }
 
 void keyboard_state_transition(struct keyboard_state *state, struct scan_code *code)
 {
   // determine if a modifier key was involved in the key event that produced the given frame
   uint8_t modifier = 0;
-  if (is_code_left_shift(code->value)) {
+  if (is_code_left_shift(code)) {
     modifier = (1 << MOD_LEFT_SHIFT);
-  } else if (is_code_right_shift(code->value)) {
+  } else if (is_code_right_shift(code)) {
     modifier = (1 << MOD_RIGHT_SHIFT);
-  } else if (is_code_left_ctrl(code->value)) {
+  } else if (is_code_left_ctrl(code)) {
     modifier = (1 << MOD_LEFT_CTRL);
-  } else if (is_code_right_ctrl(code->value)) {
+  } else if (is_code_right_ctrl(code)) {
     modifier = (1 << MOD_RIGHT_CTRL);
   }
 

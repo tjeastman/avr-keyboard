@@ -27,6 +27,8 @@ struct frame
   uint8_t end;
 };
 
+typedef uint8_t frame_value_t;
+
 int frame_buffer_valid(void);
 uint8_t frame_buffer_remove(void);
 

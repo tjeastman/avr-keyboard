@@ -48,7 +48,6 @@ int main(void)
   state.modifiers = 0;
   state.values[0] = 0;
   struct scan_code code;
-  uint8_t value;
   struct key *key;
 
   char *label;
@@ -74,26 +73,23 @@ int main(void)
   while (1) {
     wdt_reset(); // reset the watchdog timer
     usbPoll();
-    if (frame_buffer_valid()) {
-      value = frame_buffer_remove();
-      if (scan_state_transition(&code, value)) {
-        keyboard_state_update(&state, &code);
-        if (key = key_search(&code)) {
-          if (!code.release) {
-            if (label = keyboard_state_label(state, key)) {
-              printf("%s", label);
-            }
+    if (scan_code_read(&code)) {
+      keyboard_state_update(&state, &code);
+      if (key = key_search(&code)) {
+        if (!code.release) {
+          if (label = keyboard_state_label(state, key)) {
+            printf("%s", label);
           }
-
-          if (code.release) {
-            state.values[0] = 0;
-          } else if (key->value_usb == 0) {
-            state.values[0] = 0;
-          } else {
-            state.values[0] = key->value_usb;
-          }
-          //usbSetInterrupt((void *)&state, sizeof(state));
         }
+
+        if (code.release) {
+          state.values[0] = 0;
+        } else if (key->value_usb == 0) {
+          state.values[0] = 0;
+        } else {
+          state.values[0] = key->value_usb;
+        }
+        //usbSetInterrupt((void *)&state, sizeof(state));
       }
     }
     _delay_ms(10);

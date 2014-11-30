@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <avr/io.h>
 
+#include "keyboard/protocol.h"
 #include "keyboard/scan.h"
 
 int is_code_left_shift(struct scan_code *code)
@@ -65,5 +66,26 @@ int scan_state_transition(struct scan_code *code, uint8_t value)
     return 1;
   } else {
     return 0;
+  }
+}
+
+/*
+ * Read the next scan code from the keyboard.  This function will block waiting for a
+ * complete scan code if at least one frame has already been received and is available in
+ * the buffer.
+ */
+int scan_code_read(struct scan_code *code)
+{
+  if (!frame_buffer_valid()) {
+    return 0;
+  }
+
+  while (1) {
+    if (frame_buffer_valid()) {
+      frame_value_t value = frame_buffer_remove();
+      if (scan_state_transition(code, value)) {
+        return 1;
+      }
+    }
   }
 }

@@ -153,9 +153,11 @@ void keyboard_state_update(struct keyboard_state *state, struct scan_code *code)
     modifier = (1 << MOD_RIGHT_CTRL);
   }
 
-  if (code->release) {
-    state->modifiers &= ~modifier;
-  } else {
-    state->modifiers |= modifier;
+  if (modifier) {
+    if (code->release) {
+      state->modifiers &= ~modifier;
+    } else {
+      state->modifiers |= modifier;
+    }
   }
 }

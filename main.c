@@ -10,6 +10,7 @@
 #include "keyboard/protocol.h"
 #include "keyboard/scan.h"
 #include "keyboard/state.h"
+#include "keyboard/label.h"
 
 setup_keyboard_interrupt();
 
@@ -72,7 +73,7 @@ int main(void)
   state.modifiers = 0;
   state.values[0] = 0;
   struct scan_code code;
-  struct key key;
+  uint8_t value;
 
   char *label;
 
@@ -98,12 +99,12 @@ int main(void)
     wdt_reset(); // reset the watchdog timer
     usbPoll();
     if (scan_code_read(&code)) {
-      if (key_search(&code, &key)) {
-        event.key = &key;
+      if (key_search(&code, &value)) {
+        event.value = value;
         event.release = code.release;
         keyboard_state_update(&state, &event);
         if (!code.release) {
-          if (label = keyboard_state_label(state, &key)) {
+          if (label = key_label(&state, value)) {
             printf("%s", label);
           }
         }
@@ -111,7 +112,7 @@ int main(void)
         if (code.release) {
           state.values[0] = 0;
         } else {
-          state.values[0] = key.value;
+          state.values[0] = value;
         }
         usbSetInterrupt((void *)&state, sizeof(state));
       }

@@ -1,20 +1,14 @@
 #ifndef AVR_KEYBOARD_STATE_H_
 #define AVR_KEYBOARD_STATE_H_
 
-struct key {
-  uint8_t value;
-  char *label_base;
-  char *label_shift;
-};
-
 struct key_map {
   struct scan_code code;
-  struct key key;
+  uint8_t value;
 };
 
 struct key_event {
-  struct key *key;
-  unsigned short release;
+  uint8_t value;
+  uint8_t release;
 };
 
 enum keyboard_modifier_id
@@ -35,18 +29,16 @@ struct keyboard_state
   uint8_t values[1];
 };
 
-int is_key_left_shift(struct key *);
-int is_key_right_shift(struct key *);
-int is_key_left_ctrl(struct key *);
-int is_key_right_ctrl(struct key *);
-int is_key_left_alt(struct key *);
-int is_key_right_alt(struct key *);
-int is_key_left_gui(struct key *);
-int is_key_right_gui(struct key *);
+int is_key_left_shift(uint8_t);
+int is_key_right_shift(uint8_t);
+int is_key_left_ctrl(uint8_t);
+int is_key_right_ctrl(uint8_t);
+int is_key_left_alt(uint8_t);
+int is_key_right_alt(uint8_t);
+int is_key_left_gui(uint8_t);
+int is_key_right_gui(uint8_t);
 
-int key_compare(const void *, const void *);
-int key_search(struct scan_code *, struct key *);
-char *keyboard_state_label(struct keyboard_state, struct key *);
+int key_search(struct scan_code *, uint8_t *);
 
 int keyboard_shift_pressed(struct keyboard_state *);
 int keyboard_ctrl_pressed(struct keyboard_state *);

@@ -11,9 +11,9 @@ struct scan_state {
 };
 
 struct scan_code {
+  uint8_t value;
   uint8_t extended;
   uint8_t release;
-  uint8_t value;
 };
 
 int is_code_left_shift(struct scan_code *);

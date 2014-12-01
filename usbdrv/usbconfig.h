@@ -272,8 +272,8 @@ section at the end of this file).
  * Class 0xff is "vendor specific".
  */
 #define USB_CFG_INTERFACE_CLASS     0x03   /* define class here if not at device level */
-#define USB_CFG_INTERFACE_SUBCLASS  0x01
-#define USB_CFG_INTERFACE_PROTOCOL  0x01
+#define USB_CFG_INTERFACE_SUBCLASS  0x00
+#define USB_CFG_INTERFACE_PROTOCOL  0x00
 /* See USB specification if you want to conform to an existing device class or
  * protocol. The following classes must be set at interface level:
  * HID class is 3, no subclass and protocol required (but may be useful!)

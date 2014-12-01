@@ -113,7 +113,7 @@ int main(void)
         } else {
           state.values[0] = key.value;
         }
-        //usbSetInterrupt((void *)&state, sizeof(state));
+        usbSetInterrupt((void *)&state, sizeof(state));
       }
     }
     _delay_ms(10);

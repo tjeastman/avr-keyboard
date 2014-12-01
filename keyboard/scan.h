@@ -16,15 +16,6 @@ struct scan_code {
   uint8_t release;
 };
 
-int is_code_left_shift(struct scan_code *);
-int is_code_right_shift(struct scan_code *);
-int is_code_left_ctrl(struct scan_code *);
-int is_code_right_ctrl(struct scan_code *);
-int is_code_left_alt(struct scan_code *);
-int is_code_right_alt(struct scan_code *);
-int is_code_left_gui(struct scan_code *);
-int is_code_right_gui(struct scan_code *);
-
 int scan_code_read(struct scan_code *);
 
 #endif

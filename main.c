@@ -71,7 +71,7 @@ int main(void)
   state.modifiers = 0;
   state.values[0] = 0;
   struct scan_code code;
-  struct key *key;
+  struct key key;
 
   char *label;
 
@@ -97,8 +97,8 @@ int main(void)
     wdt_reset(); // reset the watchdog timer
     usbPoll();
     if (scan_code_read(&code)) {
-      keyboard_state_update(&state, &code);
-      if (key = key_search(&code)) {
+      if (key_search(&code, &key)) {
+        keyboard_state_update(&state, &code, &key);
         if (!code.release) {
           if (label = keyboard_state_label(state, key)) {
             printf("%s", label);
@@ -108,7 +108,7 @@ int main(void)
         if (code.release) {
           state.values[0] = 0;
         } else {
-          state.values[0] = key->value_usb;
+          state.values[0] = key.value;
         }
         //usbSetInterrupt((void *)&state, sizeof(state));
       }

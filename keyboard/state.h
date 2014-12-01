@@ -3,10 +3,13 @@
 
 struct key {
   uint8_t value;
-  uint8_t extended;
-  uint8_t value_usb;
-  char *label;
+  char *label_base;
   char *label_shift;
+};
+
+struct key_map {
+  struct scan_code code;
+  struct key key;
 };
 
 enum keyboard_modifier_id
@@ -27,14 +30,23 @@ struct keyboard_state
   uint8_t values[1];
 };
 
+int is_key_left_shift(struct key *);
+int is_key_right_shift(struct key *);
+int is_key_left_ctrl(struct key *);
+int is_key_right_ctrl(struct key *);
+int is_key_left_alt(struct key *);
+int is_key_right_alt(struct key *);
+int is_key_left_gui(struct key *);
+int is_key_right_gui(struct key *);
+
 int key_compare(const void *, const void *);
-struct key *key_search(struct scan_code *);
+int key_search(struct scan_code *, struct key *);
 char *keyboard_state_label(struct keyboard_state, struct key *);
 
 int keyboard_shift_pressed(struct keyboard_state *);
 int keyboard_ctrl_pressed(struct keyboard_state *);
 int keyboard_alt_pressed(struct keyboard_state *);
 int keyboard_gui_pressed(struct keyboard_state *);
-void keyboard_state_update(struct keyboard_state *, struct scan_code *);
+void keyboard_state_update(struct keyboard_state *, struct scan_code *, struct key *);
 
 #endif

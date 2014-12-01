@@ -12,6 +12,11 @@ struct key_map {
   struct key key;
 };
 
+struct key_event {
+  struct key *key;
+  unsigned short release;
+};
+
 enum keyboard_modifier_id
 {
   MOD_LEFT_CTRL = 0,
@@ -47,6 +52,6 @@ int keyboard_shift_pressed(struct keyboard_state *);
 int keyboard_ctrl_pressed(struct keyboard_state *);
 int keyboard_alt_pressed(struct keyboard_state *);
 int keyboard_gui_pressed(struct keyboard_state *);
-void keyboard_state_update(struct keyboard_state *, struct scan_code *, struct key *);
+void keyboard_state_update(struct keyboard_state *, struct key_event *);
 
 #endif

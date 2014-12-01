@@ -68,6 +68,7 @@ USB_PUBLIC uchar usbFunctionSetup(uchar data[8]) {
 int main(void)
 {
   struct keyboard_state state;
+  struct key_event event;
   state.modifiers = 0;
   state.values[0] = 0;
   struct scan_code code;
@@ -98,9 +99,11 @@ int main(void)
     usbPoll();
     if (scan_code_read(&code)) {
       if (key_search(&code, &key)) {
-        keyboard_state_update(&state, &code, &key);
+        event.key = &key;
+        event.release = code.release;
+        keyboard_state_update(&state, &event);
         if (!code.release) {
-          if (label = keyboard_state_label(state, key)) {
+          if (label = keyboard_state_label(state, &key)) {
             printf("%s", label);
           }
         }

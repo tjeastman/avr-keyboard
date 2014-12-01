@@ -189,30 +189,33 @@ int keyboard_gui_pressed(struct keyboard_state *state)
   return state->modifiers & (0x01 << MOD_LEFT_GUI | 0x01 << MOD_RIGHT_GUI);
 }
 
-void keyboard_state_update(struct keyboard_state *state, struct scan_code *code, struct key *key)
+/*
+ * Update keyboard state to reflect a given key event.
+ */
+void keyboard_state_update(struct keyboard_state *state, struct key_event *event)
 {
   // determine if the given scan code involves a modifier key
   uint8_t modifier = 0;
-  if (is_key_left_shift(key)) {
+  if (is_key_left_shift(event->key)) {
     modifier = (1 << MOD_LEFT_SHIFT);
-  } else if (is_key_right_shift(key)) {
+  } else if (is_key_right_shift(event->key)) {
     modifier = (1 << MOD_RIGHT_SHIFT);
-  } else if (is_key_left_ctrl(key)) {
+  } else if (is_key_left_ctrl(event->key)) {
     modifier = (1 << MOD_LEFT_CTRL);
-  } else if (is_key_right_ctrl(key)) {
+  } else if (is_key_right_ctrl(event->key)) {
     modifier = (1 << MOD_RIGHT_CTRL);
-  } else if (is_key_left_alt(key)) {
+  } else if (is_key_left_alt(event->key)) {
     modifier = (1 << MOD_LEFT_ALT);
-  } else if (is_key_right_alt(key)) {
+  } else if (is_key_right_alt(event->key)) {
     modifier = (1 << MOD_RIGHT_ALT);
-  } else if (is_key_left_gui(key)) {
+  } else if (is_key_left_gui(event->key)) {
     modifier = (1 << MOD_LEFT_GUI);
-  } else if (is_key_right_gui(key)) {
+  } else if (is_key_right_gui(event->key)) {
     modifier = (1 << MOD_RIGHT_GUI);
   }
 
   if (modifier) {
-    if (code->release) {
+    if (event->release) {
       state->modifiers &= ~modifier;
     } else {
       state->modifiers |= modifier;

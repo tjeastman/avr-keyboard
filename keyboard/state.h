@@ -29,21 +29,21 @@ struct keyboard_state
   uint8_t values[1];
 };
 
-int is_key_left_shift(uint8_t);
-int is_key_right_shift(uint8_t);
-int is_key_left_ctrl(uint8_t);
-int is_key_right_ctrl(uint8_t);
-int is_key_left_alt(uint8_t);
-int is_key_right_alt(uint8_t);
-int is_key_left_gui(uint8_t);
-int is_key_right_gui(uint8_t);
+bool is_key_left_shift(uint8_t);
+bool is_key_right_shift(uint8_t);
+bool is_key_left_ctrl(uint8_t);
+bool is_key_right_ctrl(uint8_t);
+bool is_key_left_alt(uint8_t);
+bool is_key_right_alt(uint8_t);
+bool is_key_left_gui(uint8_t);
+bool is_key_right_gui(uint8_t);
 
-int key_search(struct scan_code *, uint8_t *);
+bool key_search(struct scan_code *, uint8_t *);
 
-int keyboard_shift_pressed(struct keyboard_state *);
-int keyboard_ctrl_pressed(struct keyboard_state *);
-int keyboard_alt_pressed(struct keyboard_state *);
-int keyboard_gui_pressed(struct keyboard_state *);
+bool keyboard_shift_pressed(struct keyboard_state *);
+bool keyboard_ctrl_pressed(struct keyboard_state *);
+bool keyboard_alt_pressed(struct keyboard_state *);
+bool keyboard_gui_pressed(struct keyboard_state *);
 void keyboard_state_update(struct keyboard_state *, struct key_event *);
 
 #endif

@@ -1,6 +1,8 @@
 #include <stdlib.h>
+#include <stdbool.h>
 #include <avr/io.h>
 
+#include "keyboard/protocol.h"
 #include "keyboard/scan.h"
 #include "keyboard/state.h"
 
@@ -101,7 +103,7 @@ int key_compare(const void *k1, const void *k2)
   }
 }
 
-int key_search(struct scan_code *code, uint8_t *value)
+bool key_search(struct scan_code *code, uint8_t *value)
 {
   struct key_map search;
   struct key_map *result;
@@ -115,68 +117,68 @@ int key_search(struct scan_code *code, uint8_t *value)
 
   if (result) {
     *value = result->value;
-    return 1;
+    return true;
   } else {
-    return 0;
+    return false;
   }
 }
 
-int is_key_left_shift(uint8_t value)
+bool is_key_left_shift(uint8_t value)
 {
   return value == 0xE1;
 }
 
-int is_key_right_shift(uint8_t value)
+bool is_key_right_shift(uint8_t value)
 {
   return value == 0xE5;
 }
 
-int is_key_left_ctrl(uint8_t value)
+bool is_key_left_ctrl(uint8_t value)
 {
   return value == 0xE0;
 }
 
-int is_key_right_ctrl(uint8_t value)
+bool is_key_right_ctrl(uint8_t value)
 {
   return value == 0xE4;
 }
 
-int is_key_left_alt(uint8_t value)
+bool is_key_left_alt(uint8_t value)
 {
   return value == 0xE2;
 }
 
-int is_key_right_alt(uint8_t value)
+bool is_key_right_alt(uint8_t value)
 {
   return value == 0xE6;
 }
 
-int is_key_left_gui(uint8_t value)
+bool is_key_left_gui(uint8_t value)
 {
   return value == 0xE3;
 }
 
-int is_key_right_gui(uint8_t value)
+bool is_key_right_gui(uint8_t value)
 {
   return value == 0xE7;
 }
 
-int keyboard_shift_pressed(struct keyboard_state *state)
+bool keyboard_shift_pressed(struct keyboard_state *state)
 {
   return state->modifiers & (0x01 << MOD_LEFT_SHIFT | 0x01 << MOD_RIGHT_SHIFT);
 }
 
-int keyboard_ctrl_pressed(struct keyboard_state *state)
+bool keyboard_ctrl_pressed(struct keyboard_state *state)
 {
   return state->modifiers & (0x01 << MOD_LEFT_CTRL | 0x01 << MOD_RIGHT_CTRL);
 }
 
-int keyboard_alt_pressed(struct keyboard_state *state)
+bool keyboard_alt_pressed(struct keyboard_state *state)
 {
   return state->modifiers & (0x01 << MOD_LEFT_ALT | 0x01 << MOD_RIGHT_ALT);
 }
 
-int keyboard_gui_pressed(struct keyboard_state *state)
+bool keyboard_gui_pressed(struct keyboard_state *state)
 {
   return state->modifiers & (0x01 << MOD_LEFT_GUI | 0x01 << MOD_RIGHT_GUI);
 }

@@ -5,17 +5,17 @@
 #define EXTENDED_KEY_VALUE 0xE0
 
 struct scan_state {
-  uint8_t extended;
-  uint8_t release;
-  uint8_t final;
+  bool extended;
+  bool release;
+  bool final;
 };
 
 struct scan_code {
-  uint8_t value;
-  uint8_t extended;
-  uint8_t release;
+  frame_value_t value;
+  bool extended;
+  bool release;
 };
 
-int scan_code_read(struct scan_code *);
+bool scan_code_read(struct scan_code *);
 
 #endif

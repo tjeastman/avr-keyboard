@@ -1,6 +1,8 @@
 #include <stdlib.h>
+#include <stdbool.h>
 #include <avr/io.h>
 
+#include "keyboard/protocol.h"
 #include "keyboard/scan.h"
 #include "keyboard/state.h"
 #include "keyboard/label.h"

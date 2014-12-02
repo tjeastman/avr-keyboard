@@ -108,10 +108,10 @@ int main(void)
           printf("%s", label);
         }
 
-        if (code.release) {
+        if (event.release) {
           state.values[0] = 0;
         } else {
-          state.values[0] = value;
+          state.values[0] = event.value;
         }
         usbSetInterrupt((void *)&state, sizeof(state));
       }

@@ -7,6 +7,6 @@ struct key_label_map {
   char *label_shift;
 };
 
-char *key_label(struct keyboard_state *, uint8_t);
+char *key_label(struct keyboard_state *, struct key_event *);
 
 #endif

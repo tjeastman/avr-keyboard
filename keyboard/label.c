@@ -101,15 +101,19 @@ int key_label_compare(const void *k1, const void *k2)
 }
 
 /*
- * Get an appropriate string label for the given key and keyboard state if one is
+ * Get an appropriate string label for the given key event and keyboard state if one is
  * available.  If no label is available then return NULL.
  */
-char *key_label(struct keyboard_state *state, uint8_t value)
+char *key_label(struct keyboard_state *state, struct key_event *event)
 {
+  if (event->release) {
+    return NULL;
+  }
+
   struct key_label_map search;
   struct key_label_map *result;
 
-  search.value = value;
+  search.value = event->value;
   search.label_base = NULL;
   search.label_shift = NULL;
 

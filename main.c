@@ -104,10 +104,8 @@ int main(void)
         event.value = value;
         event.release = code.release;
         keyboard_state_update(&state, &event);
-        if (!code.release) {
-          if (label = key_label(&state, value)) {
-            printf("%s", label);
-          }
+        if (label = key_label(&state, &event)) {
+          printf("%s", label);
         }
 
         if (code.release) {

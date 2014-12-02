@@ -38,7 +38,7 @@ bool is_key_right_alt(uint8_t);
 bool is_key_left_gui(uint8_t);
 bool is_key_right_gui(uint8_t);
 
-bool key_search(struct scan_code *, uint8_t *);
+bool key_search(struct scan_code *, struct key_event *);
 
 bool keyboard_shift_pressed(struct keyboard_state *);
 bool keyboard_ctrl_pressed(struct keyboard_state *);

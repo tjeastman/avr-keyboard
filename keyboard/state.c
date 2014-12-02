@@ -103,7 +103,7 @@ int key_compare(const void *k1, const void *k2)
   }
 }
 
-bool key_search(struct scan_code *code, uint8_t *value)
+bool key_search(struct scan_code *code, struct key_event *event)
 {
   struct key_map search;
   struct key_map *result;
@@ -116,7 +116,8 @@ bool key_search(struct scan_code *code, uint8_t *value)
   result = bsearch(&search, keys, size, sizeof(struct key_map), key_compare);
 
   if (result) {
-    *value = result->value;
+    event->value = result->value;
+    event->release = code->release;
     return true;
   } else {
     return false;

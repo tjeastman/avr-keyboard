@@ -5,7 +5,7 @@ F_CPU = 16000000L
 BAUD = 9600
 CFLAGS = -DF_CPU=$(F_CPU) -DBAUD=$(BAUD) -mmcu=$(DEVICE) -Os -std=c99 -I. -c
 
-OBJECTS = main.o usart.o
+OBJECTS = usbdrv/usbdrvasm.o usbdrv/usbdrv.o main.o usart.o
 
 main.hex: main.elf
 	$(OBJCOPY) -j .text -j .data -O ihex $< $@
@@ -13,8 +13,14 @@ main.hex: main.elf
 main.elf: $(OBJECTS)
 	$(CC) -mmcu=$(DEVICE) -o $@ $(OBJECTS)
 
+usbdrv/usbdrvasm.o: usbdrv/usbdrvasm.S
+	$(CC) $(CFLAGS) -o usbdrv/usbdrvasm.o usbdrv/usbdrvasm.S
+
+usbdrv/usbdrv.o: usbdrv/usbdrv.c usbdrv/usbconfig.h
+	$(CC) $(CFLAGS) -o usbdrv/usbdrv.o usbdrv/usbdrv.c
+
 main.o: main.c
-	$(CC) $(CFLAGS) -o $@ $<
+	$(CC) $(CFLAGS) -Iusbdrv -o $@ $<
 
 %.o: %.c
 	$(CC) $(CFLAGS) -o $@ $<

@@ -2,7 +2,6 @@
 #include <stdbool.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
-#include <avr/wdt.h>
 
 #include "usart.h"
 

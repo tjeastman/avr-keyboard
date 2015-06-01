@@ -6,6 +6,7 @@
 #include "keyboard/scan.h"
 #include "keyboard/state.h"
 
+// map PS2 scan codes (from set 2) to USB keyboard code values
 struct key_map keys[] = {
   {{0x01, 0, 0}, 0x42},
   {{0x03, 0, 0}, 0x3E},
@@ -28,7 +29,7 @@ struct key_map keys[] = {
   {{0x16, 0, 0}, 0x1E},
   {{0x1A, 0, 0}, 0x1D},
   {{0x1B, 0, 0}, 0x16},
-  {{0x1C, 0, 0}, 0x04},
+  {{0x1C, 0, 0}, 0x04}, // a
   {{0x1D, 0, 0}, 0x1A},
   {{0x1E, 0, 0}, 0x1F},
   {{0x21, 0, 0}, 0x06},

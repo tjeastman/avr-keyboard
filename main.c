@@ -77,17 +77,6 @@ int main(void)
 
   char *label;
 
-  wdt_enable(WDTO_1S); // enable 1s watchdog timer
-
-  usbInit();
-
-  usbDeviceDisconnect(); // enforce re-enumeration
-  for (int i = 0; i < 250; ++i) {
-    wdt_reset(); // reset the watchdog timer
-    _delay_ms(2);
-  }
-  usbDeviceConnect();
-
   usart_init();
   keyboard_init();
 
@@ -96,8 +85,6 @@ int main(void)
   printf("Hello\r\n");
 
   while (1) {
-    wdt_reset(); // reset the watchdog timer
-    usbPoll();
     if (scan_code_read(&code)) {
       printf("Read scan code %d [extended=%d, release=%d]\r\n", code.value, code.extended, code.release);
       if (key_search(&code, &event)) {
@@ -112,7 +99,6 @@ int main(void)
         } else {
           state.values[0] = event.value;
         }
-        usbSetInterrupt((void *)&state, sizeof(state));
       }
     }
     _delay_ms(10);

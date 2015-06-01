@@ -99,10 +99,12 @@ int main(void)
     wdt_reset(); // reset the watchdog timer
     usbPoll();
     if (scan_code_read(&code)) {
+      printf("Read scan code %d [extended=%d, release=%d]\r\n", code.value, code.extended, code.release);
       if (key_search(&code, &event)) {
+        printf("Search success: %d [release=%d]\r\n", event.value, event.release);
         keyboard_state_update(&state, &event);
         if (label = key_label(&state, &event)) {
-          printf("%s", label);
+          printf("Label: %s\r\n", label);
         }
 
         if (event.release) {

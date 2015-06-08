@@ -20,7 +20,7 @@ int main(void)
   while (1) {
     if (frame_buffer_valid()) {
       if (frame_buffer_remove(&value)) {
-        putchar(value);
+        usart_putchar(value);
       }
     }
     _delay_ms(10);

@@ -17,8 +17,6 @@ int main(void)
   usart_init();
   keyboard_init();
 
-  stdout = &usart_output;
-
   while (1) {
     if (frame_buffer_valid()) {
       if (frame_buffer_remove(&value)) {

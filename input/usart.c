@@ -18,12 +18,3 @@ void usart_init(void)
     UCSR0C = _BV(UCSZ01) | _BV(UCSZ00); // 8-bit data
     UCSR0B = _BV(RXEN0) | _BV(TXEN0); // enable RX and TX
 }
-
-int usart_putchar(char c, FILE *stream)
-{
-  loop_until_bit_is_set(UCSR0A, UDRE0);
-  UDR0 = c;
-  return 0;
-}
-
-FILE usart_output = FDEV_SETUP_STREAM(usart_putchar, NULL, _FDEV_SETUP_WRITE);

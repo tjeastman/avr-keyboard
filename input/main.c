@@ -7,9 +7,6 @@
 
 #include "keyboard/base.h"
 #include "keyboard/protocol.h"
-#include "keyboard/scan.h"
-#include "keyboard/state.h"
-#include "keyboard/label.h"
 
 setup_keyboard_interrupt();
 

@@ -5,7 +5,7 @@ F_CPU = 16000000L
 BAUD = 9600
 CFLAGS = -DF_CPU=$(F_CPU) -DBAUD=$(BAUD) -mmcu=$(DEVICE) -Os -std=c99 -I. -c
 
-OBJECTS = usbdrv/usbdrvasm.o usbdrv/usbdrv.o main.o usart.o keyboard/base.o keyboard/protocol.o keyboard/state.o keyboard/scan.o keyboard/label.o
+OBJECTS = usbdrv/usbdrvasm.o usbdrv/usbdrv.o main.o usart.o keyboard/protocol.o keyboard/state.o keyboard/scan.o keyboard/label.o
 
 main.hex: main.elf
 	$(OBJCOPY) -j .text -j .data -O ihex $< $@

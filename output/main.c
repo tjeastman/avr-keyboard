@@ -6,7 +6,6 @@
 #include "usbdrv.h"
 #include "usart.h"
 
-#include "keyboard/base.h"
 #include "keyboard/protocol.h"
 #include "keyboard/scan.h"
 #include "keyboard/state.h"

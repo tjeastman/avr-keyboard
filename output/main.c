@@ -1,15 +1,16 @@
 #include <stdio.h>
+#include <stdbool.h>
 #include <avr/wdt.h>
+#include <util/delay.h>
 
 #include "usbdrv.h"
 #include "usart.h"
 
-// FIX determine a suitable structure for keyboard state data on the device side
-struct keyboard_state
-{
-  uint8_t modifiers;
-  uint8_t values[1];
-};
+#include "keyboard/base.h"
+#include "keyboard/protocol.h"
+#include "keyboard/scan.h"
+#include "keyboard/state.h"
+#include "keyboard/label.h"
 
 PROGMEM const char usbHidReportDescriptor[USB_CFG_HID_REPORT_DESCRIPTOR_LENGTH] = {
     0x05, 0x01,         // USAGE_PAGE (Generic Desktop)
@@ -65,11 +66,42 @@ USB_PUBLIC uchar usbFunctionSetup(uchar data[8]) {
 
 int main(void)
 {
+  struct keyboard_state state;
+  struct key_event event;
+  state.modifiers = 0;
+  state.values[0] = 0;
+  struct scan_code code;
+
+  char input_char;
+  struct frame input_frame;
+
+  char *label;
+
   usart_init();
+  stdout = &usart_output;
 
   while (1) {
-    char c = usart_getchar();
-    usart_putchar(c);
+    if (usart_getchar(&input_char)) {
+      input_frame.data = input_char;
+      frame_buffer_insert(input_frame);
+    }
+    if (scan_code_read(&code)) {
+      printf("Read scan code %d [extended=%d, release=%d]\r\n", code.value, code.extended, code.release);
+      if (key_search(&code, &event)) {
+        printf("Search success: %d [release=%d]\r\n", event.value, event.release);
+        keyboard_state_update(&state, &event);
+        if (label = key_label(&state, &event)) {
+          printf("Label: %s\r\n", label);
+        }
+
+        if (event.release) {
+          state.values[0] = 0;
+        } else {
+          state.values[0] = event.value;
+        }
+      }
+    }
+    _delay_ms(10);
   }
 
   return 0;

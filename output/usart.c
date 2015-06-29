@@ -25,7 +25,14 @@ void usart_putchar(char c)
   UDR0 = c;
 }
 
-char usart_getchar(void) {
-  loop_until_bit_is_set(UCSR0A, RXC0);
-  return UDR0;
+int usart_getchar(char *c)
+{
+  if (bit_is_set(UCSR0A, RXC0)) {
+    *c = UDR0;
+    return 1;
+  } else {
+    return 0;
+  }
 }
+
+FILE usart_output = FDEV_SETUP_STREAM(usart_putchar, NULL, _FDEV_SETUP_WRITE);

@@ -41,7 +41,7 @@ bool scan_code_read(struct scan_code *code)
     return false;
   }
 
-  while (1) {
+  while (true) {
     frame_value_t value;
     if (frame_buffer_remove(&value)) {
       if (scan_state_transition(code, value)) {

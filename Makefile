@@ -1,21 +1,30 @@
-ARCH = AVR8
-TARGET = main
-MCU = atmega32u4
-SRC = $(TARGET).c
-F_CPU = 16000000
-F_USB = $(F_CPU)
-LUFA_PATH = contrib/lufa/LUFA
-AVRDUDE_PROGRAMMER = usbtiny
+CC = avr-gcc
+OBJCOPY = avr-objcopy
+DEVICE = atmega32u4
+F_CPU = 16000000L
+BAUD = 9600
+CFLAGS = -DF_CPU=$(F_CPU) -DBAUD=$(BAUD) -mmcu=$(DEVICE) -Os -std=c99 -I. -c
 
-all:
+OBJECTS = main.o usart.o keyboard/base.o keyboard/protocol.o keyboard/state.o keyboard/scan.o keyboard/label.o
 
-# Include LUFA build script makefiles
-include $(LUFA_PATH)/Build/lufa_core.mk
-include $(LUFA_PATH)/Build/lufa_sources.mk
-include $(LUFA_PATH)/Build/lufa_build.mk
-include $(LUFA_PATH)/Build/lufa_cppcheck.mk
-include $(LUFA_PATH)/Build/lufa_doxygen.mk
-include $(LUFA_PATH)/Build/lufa_dfu.mk
-include $(LUFA_PATH)/Build/lufa_hid.mk
-include $(LUFA_PATH)/Build/lufa_avrdude.mk
-include $(LUFA_PATH)/Build/lufa_atprogram.mk
+main.hex: main.elf
+	$(OBJCOPY) -j .text -j .data -O ihex $< $@
+
+main.elf: $(OBJECTS)
+	$(CC) -mmcu=$(DEVICE) -o $@ $(OBJECTS)
+
+main.o: main.c
+	$(CC) $(CFLAGS) -o $@ $<
+
+%.o: %.c
+	$(CC) $(CFLAGS) -o $@ $<
+
+all: main.hex
+
+flash: main.hex
+	avrdude -p $(DEVICE) -c usbtiny -P usb -qq -U flash:w:main.hex
+
+clean:
+	$(RM) main.hex main.elf $(OBJECTS)
+
+.PHONY: all flash clean

@@ -107,14 +107,12 @@ int key_compare(const void *k1, const void *k2)
 bool key_search(struct scan_code *code, struct key_event *event)
 {
   struct key_map search;
-  struct key_map *result;
-
   search.code.value = code->value;
   search.code.extended = code->extended;
 
   int size = sizeof(keys) / sizeof(struct key_map);
 
-  result = bsearch(&search, keys, size, sizeof(struct key_map), key_compare);
+  struct key_map *result = bsearch(&search, keys, size, sizeof(struct key_map), key_compare);
 
   if (result) {
     event->value = result->value;

@@ -23,7 +23,6 @@ int main(void)
   state.values[0] = 0;
   struct scan_code code;
 
-  char input_char;
   struct frame input_frame;
 
   char *label;

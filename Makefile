@@ -1,6 +1,8 @@
 CC = avr-gcc
 OBJCOPY = avr-objcopy
-DEVICE = atmega32u4
+DEVICE = atmega328p
+PROGRAMMER = avrispv2
+PORT = /dev/ttyACM0
 F_CPU = 16000000L
 BAUD = 9600
 CFLAGS = -DF_CPU=$(F_CPU) -DBAUD=$(BAUD) -mmcu=$(DEVICE) -Os -std=c99 -I. -c
@@ -22,7 +24,7 @@ main.o: main.c
 all: main.hex
 
 flash: main.hex
-	avrdude -p $(DEVICE) -c usbtiny -P usb -qq -U flash:w:main.hex
+	avrdude -p $(DEVICE) -c $(PROGRAMMER) -P $(PORT) -qq -U flash:w:main.hex
 
 clean:
 	$(RM) main.hex main.elf $(OBJECTS)

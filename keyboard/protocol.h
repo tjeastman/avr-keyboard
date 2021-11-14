@@ -3,8 +3,6 @@
 
 #define FRAME_BUFFER_SIZE 10
 
-#define frame_buffer_increment(name) ((name) + 1) % FRAME_BUFFER_SIZE
-
 enum frame_state_id
 {
   FRAME_START,
@@ -22,15 +20,14 @@ struct frame_state
 struct frame
 {
   uint8_t start;
-  uint8_t data;
+  uint8_t value;
   uint8_t parity;
   uint8_t end;
 };
 
 typedef uint8_t frame_value_t;
 
-int frame_buffer_valid(void);
-int frame_buffer_remove(frame_value_t *);
+bool frame_buffer_remove(frame_value_t *);
 
 void keyboard_interrupt(void);
 

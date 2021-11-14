@@ -35,11 +35,9 @@ bool scan_state_transition(struct scan_code *code, frame_value_t value)
 bool scan_code_read(struct scan_code *code)
 {
   frame_value_t value;
-  if (!frame_buffer_valid()) {
+  if (!frame_buffer_remove(&value)) {
     return false;
-  } else if (!frame_buffer_remove(&value)){
-    return false;
-  } else if (!scan_state_transition(code, value)){
+  } else if (!scan_state_transition(code, value)) {
     return false;
   }
   return true;

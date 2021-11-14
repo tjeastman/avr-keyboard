@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdbool.h>
 #include <avr/io.h>
 
 #include "keyboard/base.h"
@@ -11,25 +12,22 @@ volatile unsigned int frame_buffer_tail = 0;
 volatile struct frame_state state = { FRAME_START, 0 };
 volatile struct frame frame;
 
-int frame_buffer_valid(void)
+bool frame_buffer_remove(frame_value_t *frame_value)
 {
-  return frame_buffer_head != frame_buffer_tail;
-}
-
-int frame_buffer_remove(frame_value_t *value)
-{
-  if (frame_buffer_head != frame_buffer_tail) {
-    *value = frame_buffer[frame_buffer_head].data;
-    frame_buffer_head = frame_buffer_increment(frame_buffer_head);
-    return 1;
+  if (frame_buffer_head == frame_buffer_tail) {
+    return false;
   }
-  return 0;
+  *frame_value = frame_buffer[frame_buffer_head].value;
+  frame_buffer_head += 1;
+  frame_buffer_head %= FRAME_BUFFER_SIZE;
+  return true;
 }
 
 inline void frame_buffer_insert(volatile struct frame frame)
 {
   frame_buffer[frame_buffer_tail] = frame;
-  frame_buffer_tail = frame_buffer_increment(frame_buffer_tail);
+  frame_buffer_tail += 1;
+  frame_buffer_tail %= FRAME_BUFFER_SIZE;
 }
 
 inline void frame_state_transition(volatile struct frame_state *state)
@@ -55,11 +53,11 @@ inline void frame_state_transition(volatile struct frame_state *state)
 void keyboard_interrupt(void)
 {
   if (state.id == FRAME_START) {
-    frame.data = 0;
+    frame.value = 0;
     frame.parity = 0;
   } else if (state.id == FRAME_DATA) {
-    frame.data = frame.data >> 1;
-    frame.data |= (read_keyboard_data() << 7);
+    frame.value = frame.value >> 1;
+    frame.value |= (read_keyboard_data() << 7);
   } else if (state.id ==  FRAME_PARITY) {
     frame.parity = read_keyboard_data();
   } else if (state.id == FRAME_END) {

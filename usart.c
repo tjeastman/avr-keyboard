@@ -19,7 +19,7 @@ void usart_init(void)
   UCSR0B = _BV(RXEN0) | _BV(TXEN0); // enable RX and TX
 }
 
-void usart_putchar(char c)
+int usart_putchar(char c, FILE *stream)
 {
   loop_until_bit_is_set(UCSR0A, UDRE0);
   UDR0 = c;

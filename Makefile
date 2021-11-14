@@ -1,8 +1,8 @@
 CC = avr-gcc
 OBJCOPY = avr-objcopy
 DEVICE = atmega328p
-PROGRAMMER = avrispv2
-PORT = /dev/ttyACM0
+PROGRAMMER = usbtiny
+PORT = usb
 F_CPU = 16000000L
 BAUD = 9600
 CFLAGS = -DF_CPU=$(F_CPU) -DBAUD=$(BAUD) -mmcu=$(DEVICE) -Os -std=c99 -I. -c

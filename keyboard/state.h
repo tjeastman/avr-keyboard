@@ -1,5 +1,5 @@
-#ifndef AVR_KEYBOARD_STATE_H_
-#define AVR_KEYBOARD_STATE_H_
+#ifndef KEYBOARD_STATE_H_
+#define KEYBOARD_STATE_H_
 
 struct key_map {
   struct scan_code code;

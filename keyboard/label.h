@@ -1,5 +1,5 @@
-#ifndef AVR_KEYBOARD_LABEL_H_
-#define AVR_KEYBOARD_LABEL_H_
+#ifndef KEYBOARD_LABEL_H_
+#define KEYBOARD_LABEL_H_
 
 struct key_label_map {
   uint8_t value;

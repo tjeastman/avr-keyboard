@@ -29,23 +29,15 @@ bool scan_state_transition(struct scan_code *code, frame_value_t value)
   return false;
 }
 
-/*
- * Read the next scan code from the keyboard.  This function will block waiting for a
- * complete scan code if at least one frame has already been received and is available in
- * the buffer.
- */
 bool scan_code_read(struct scan_code *code)
 {
+  frame_value_t value;
   if (!frame_buffer_valid()) {
     return false;
+  } else if (!frame_buffer_remove(&value)){
+    return false;
+  } else if (!scan_state_transition(code, value)){
+    return false;
   }
-
-  while (true) {
-    frame_value_t value;
-    if (frame_buffer_remove(&value)) {
-      if (scan_state_transition(code, value)) {
-        return true;
-      }
-    }
-  }
+  return true;
 }

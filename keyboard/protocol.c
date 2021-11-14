@@ -22,9 +22,8 @@ int frame_buffer_remove(frame_value_t *value)
     *value = frame_buffer[frame_buffer_head].data;
     frame_buffer_head = frame_buffer_increment(frame_buffer_head);
     return 1;
-  } else {
-    return 0;
   }
+  return 0;
 }
 
 inline void frame_buffer_insert(volatile struct frame frame)

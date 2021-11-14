@@ -99,9 +99,8 @@ int key_compare(const void *k1, const void *k2)
   struct key_map *key2 = (struct key_map *)k2;
   if (key1->code.value == key2->code.value) {
     return key1->code.extended - key2->code.extended;
-  } else {
-    return key1->code.value - key2->code.value;
   }
+  return key1->code.value - key2->code.value;
 }
 
 bool key_search(struct scan_code *code, struct key_event *event)
@@ -118,9 +117,8 @@ bool key_search(struct scan_code *code, struct key_event *event)
     event->value = result->value;
     event->release = code->release;
     return true;
-  } else {
-    return false;
   }
+  return false;
 }
 
 bool is_key_left_shift(uint8_t value)

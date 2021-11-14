@@ -25,9 +25,8 @@ bool scan_state_transition(struct scan_code *code, frame_value_t value)
     state.release = false;
     state.final = false;
     return true;
-  } else {
-    return false;
   }
+  return false;
 }
 
 /*

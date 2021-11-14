@@ -126,7 +126,6 @@ char *key_label(struct keyboard_state *state, struct key_event *event)
     return NULL;
   } else if (keyboard_shift_pressed(state) && result->label_shift) {
     return result->label_shift;
-  } else {
-    return result->label_base;
   }
+  return result->label_base;
 }

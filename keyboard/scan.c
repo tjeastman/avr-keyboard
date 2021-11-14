@@ -29,6 +29,9 @@ bool scan_state_transition(struct scan_code *code, frame_value_t value)
   return false;
 }
 
+/*
+ * Read the next scan code from the keyboard.
+ */
 bool scan_code_read(struct scan_code *code)
 {
   frame_value_t value;

@@ -16,14 +16,11 @@ setup_keyboard_interrupt();
 
 int main(void)
 {
-  frame_value_t value;
   struct keyboard_state state;
   struct key_event event;
   state.modifiers = 0;
   state.values[0] = 0;
   struct scan_code code;
-
-  struct frame input_frame;
 
   char *label;
 

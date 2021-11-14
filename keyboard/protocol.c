@@ -34,8 +34,9 @@ inline void frame_buffer_insert(volatile struct frame frame)
 
 inline void frame_state_transition(volatile struct frame_state *state)
 {
-  if (state->id == FRAME_DATA)
+  if (state->id == FRAME_DATA) {
     state->nbits += 1;
+  }
 
   if (state->id == FRAME_START) {
     state->id = FRAME_DATA;

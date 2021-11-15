@@ -1,6 +1,9 @@
 #ifndef KEYBOARD_STATE_H_
 #define KEYBOARD_STATE_H_
 
+#include <stdbool.h>
+#include <stdint.h>
+
 struct key_map {
   struct scan_code code;
   uint8_t value;

@@ -1,6 +1,8 @@
 #ifndef KEYBOARD_SCAN_H_
 #define KEYBOARD_SCAN_H_
 
+#include <stdbool.h>
+
 #define RELEASE_KEY_VALUE 0xF0
 #define EXTENDED_KEY_VALUE 0xE0
 

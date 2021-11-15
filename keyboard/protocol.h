@@ -1,6 +1,9 @@
 #ifndef KEYBOARD_PROTOCOL_H_
 #define KEYBOARD_PROTOCOL_H_
 
+#include <stdbool.h>
+#include <stdint.h>
+
 #define FRAME_BUFFER_SIZE 10
 
 enum frame_state_id
